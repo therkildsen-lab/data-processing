@@ -18,6 +18,8 @@ SAMPLEADAPT=$BASEDIR'AdapterClipped/'$SAMPLE_SEQ_ID  # The output path and file 
 #### CLEANING THE READS ####
 
 # Remove adapter sequence with Trimmomatic. 
-java -jar /programs/trimmomatic/trimmomatic-0.36.jar PE -threads 18 -phred33 $FASTQ'_R1.fastq.gz' $FASTQ'_R2.fastq.gz' $SAMPLEADAPT'_AdapterClipped_F_paired.fastq.gz' $SAMPLEADAPT'_AdapterClipped_F_unpaired.fastq.gz' $SAMPLEADAPT'_AdapterClipped_R_paired.fastq.gz' $SAMPLEADAPT'_AdapterClipped_R_unpaired.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10:4:true'
+# The options for ILLUMINACLIP are: ILLUMINACLIP:<fastaWithAdaptersEtc>:<seed mismatches>:<palindrome clip threshold>:<simple clip threshold>:<minAdapterLength>:<keepBothReads>
+# For definitions of these options, see http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/TrimmomaticManual_V0.32.pdf
+java -jar /programs/trimmomatic/trimmomatic-0.36.jar PE -threads 18 -phred33 $FASTQ'_R1.fastq.gz' $FASTQ'_R2.fastq.gz' $SAMPLEADAPT'_AdapterClipped_F_paired.fastq.gz' $SAMPLEADAPT'_AdapterClipped_F_unpaired.fastq.gz' $SAMPLEADAPT'_AdapterClipped_R_paired.fastq.gz' $SAMPLEADAPT'_AdapterClipped_R_unpaired.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10:1:true'
 
 done
