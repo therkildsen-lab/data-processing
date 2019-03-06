@@ -12,7 +12,7 @@ PE=$4 # Whether the data is pair end or single end. true or false.
 for SAMPLEFILE in `cat $SAMPLELIST`; do
 
 # Extract relevant values from a table of sample, sequencing, and lane ID (here in columns 4, 3, 2, respectively) for each sequenced library
-SAMPLE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 4`
+SAMPLE_ID=`grep $SAMPLEFILE $SAMPLETABLE | cut -f 4`
 SEQ_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 3`
 LANE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
 
