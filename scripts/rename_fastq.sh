@@ -12,6 +12,7 @@ PE=$4 # Whether the data is pair end or single end. true or false.
 for SAMPLEFILE in `cat $SAMPLELIST`; do
 
 # Extract relevant values from a table of sample, sequencing, and lane ID (here in columns 4, 3, 2, respectively) for each sequenced library
+LINE=`grep $SAMPLEFILE $SAMPLETABLE`
 SAMPLE_ID=`grep $SAMPLEFILE $SAMPLETABLE | cut -f 4`
 SEQ_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 3`
 LANE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
@@ -22,6 +23,7 @@ SAMPLE_SEQ_ID=$SAMPLE_ID'_'$SEQ_ID'_'$LANE_ID  # When a sample has been sequence
 OLD_SAMPLEADAPT=$BASEDIR'AdapterClipped/'$OLD_SAMPLE_SEQ_ID
 SAMPLEADAPT=$BASEDIR'AdapterClipped/'$SAMPLE_SEQ_ID  # The output path and file prefix
 
+echo $LINE
 echo $SAMPLEFILE
 echo $SAMPLE_ID
 echo $SEQ_ID
