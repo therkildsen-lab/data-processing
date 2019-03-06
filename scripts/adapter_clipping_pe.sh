@@ -7,6 +7,7 @@ RAWFASTQDIR=$3 # Path to raw fastq files. An example for the sturgeon data is: /
 BASEDIR=$4 # Path to the base directory where adapter clipped fastq file are stored in a subdirectory titled "AdapterClipped" and into which output files will be written to separate subdirectories. An example for the sturgeon data is: /workdir/Sturgeon/
 RAWFASTQSUFFIX1=$5 # Suffix to forward raw fastq files. An example for the sturgeon data is: _1.txt.gz
 RAWFASTQSUFFIX2=$6 # Suffix to reverse raw fastq files. An example for the sturgeon data is: _2.txt.gz
+ADAPTERS=$7 # Path to a list of adapter/index sequences. For Nextera libraries: /workdir/Cod/ReferenceSeqs/NexteraPE_NT.fa For BEST libraries: /workdir/Cod/ReferenceSeqs/BEST.fa
 
 ##### RUN EACH SAMPLE THROUGH PIPELINE #######
 
