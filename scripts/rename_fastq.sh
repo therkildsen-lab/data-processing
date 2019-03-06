@@ -22,8 +22,12 @@ SAMPLE_SEQ_ID=$SAMPLE_ID'_'$SEQ_ID'_'$LANE_ID  # When a sample has been sequence
 OLD_SAMPLEADAPT=$BASEDIR'AdapterClipped/'$OLD_SAMPLE_SEQ_ID
 SAMPLEADAPT=$BASEDIR'AdapterClipped/'$SAMPLE_SEQ_ID  # The output path and file prefix
 
-echo $OLD_SAMPLEADAPT
-echo $SAMPLEADAPT
+echo $SAMPLEFILE
+echo $SAMPLE_ID
+echo $SEQ_ID
+echo $LANE_ID
+echo $OLD_SAMPLE_SEQ_ID
+echo $SAMPLE_SEQ_ID
 #### RENAME ####
 if $PE; then
 mv $OLD_SAMPLEADAPT'_AdapterClipped_F_paired.fastq' $SAMPLEADAPT'_AdapterClipped_F_paired.fastq'
