@@ -31,7 +31,7 @@ mv $OLD_SAMPLEADAPT'_AdapterClipped_R_paired.fastq' $SAMPLEADAPT'_AdapterClipped
 mv $OLD_SAMPLEADAPT'_AdapterClipped_F_unpaired.fastq' $SAMPLEADAPT'_AdapterClipped_F_unpaired.fastq'
 mv $OLD_SAMPLEADAPT'_AdapterClipped_R_unpaired.fastq' $SAMPLEADAPT'_AdapterClipped_R_unpaired.fastq'
 else
-#mv $OLD_SAMPLEADAPT'_AdapterClipped_SE.fastq' $SAMPLEADAPT'_AdapterClipped_SE.fastq'
+mv $OLD_SAMPLEADAPT'_AdapterClipped_SE.fastq' $SAMPLEADAPT'_AdapterClipped_SE.fastq'
 fi
 
 done
