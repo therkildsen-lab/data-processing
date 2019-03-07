@@ -22,7 +22,7 @@ LANE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
 
 SAMPLE_SEQ_ID=$SAMPLE_ID'_'$SEQ_ID'_'$LANE_ID  # When a sample has been sequenced in multiple lanes, we need to be able to identify the files from each run uniquely
 
-FASTQ=$RAWFASTQDIR$SAMPLEFILE  # The input path and file prefix
+RAWFASTQ_ID=$RAWFASTQDIR$SAMPLEFILE  # The input path and file prefix
 SAMPLEADAPT=$BASEDIR'AdapterClipped/'$SAMPLE_SEQ_ID  # The output path and file prefix
 
 #### ADAPTER CLIPPING THE READS ####
@@ -31,9 +31,9 @@ if $PE; then
 # Remove adapter sequence with Trimmomatic. 
 # The options for ILLUMINACLIP are: ILLUMINACLIP:<fastaWithAdaptersEtc>:<seed mismatches>:<palindrome clip threshold>:<simple clip threshold>:<minAdapterLength>:<keepBothReads>
 # For definitions of these options, see http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/TrimmomaticManual_V0.32.pdf
-java -jar /programs/trimmomatic/trimmomatic-0.36.jar PE -threads 18 -phred33 $FASTQ$RAWFASTQSUFFIX1 $FASTQ$RAWFASTQSUFFIX2 $SAMPLEADAPT'_AdapterClipped_F_paired.fastq.gz' $SAMPLEADAPT'_AdapterClipped_F_unpaired.fastq.gz' $SAMPLEADAPT'_AdapterClipped_R_paired.fastq.gz' $SAMPLEADAPT'_AdapterClipped_R_unpaired.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10:1:true'
+java -jar /programs/trimmomatic/trimmomatic-0.36.jar PE -threads 18 -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $RAWFASTQ_ID$RAWFASTQSUFFIX2 $SAMPLEADAPT'_AdapterClipped_F_paired.fastq.gz' $SAMPLEADAPT'_AdapterClipped_F_unpaired.fastq.gz' $SAMPLEADAPT'_AdapterClipped_R_paired.fastq.gz' $SAMPLEADAPT'_AdapterClipped_R_unpaired.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10:1:true'
 else
-java -jar /programs/trimmomatic/trimmomatic-0.36.jar SE -threads 18 -phred33 $FASTQ $SAMPLEADAPT'_AdapterClipped_SE.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10'
+java -jar /programs/trimmomatic/trimmomatic-0.36.jar SE -threads 18 -phred33 $RAWFASTQ_ID $SAMPLEADAPT'_AdapterClipped_SE.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10'
 fi
 
 done
