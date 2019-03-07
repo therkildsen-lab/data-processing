@@ -34,7 +34,7 @@ ADAPTERFILES=$BASEDIR'AdapterClipped/'$SAMPLE_SEQ_ID'_'*
 ADPTERCLIPBASES=`zcat $ADAPTERFILES | grep -A 1 -E "^$SEQUENCER" | grep "^[ACGTN]" | tr -d "\n" | wc -m`
 
 # Find all quality trimmed fastq files corresponding to this sample and store them in the object QUALFILES.
-QUALFILES=$BASEDIR'QualFilt/'$SAMPLE_SEQ_ID'_'*
+QUALFILES=$BASEDIR'QualFiltered/'$SAMPLE_SEQ_ID'_'*
 
 # Count bases in quality trimmed files.
 QUALFILTPBASES=`zcat $QUALFILES | grep -A 1 -E "^$SEQUENCER" | grep "^[ACGTN]" | tr -d "\n" | wc -m`
