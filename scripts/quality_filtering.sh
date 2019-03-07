@@ -28,7 +28,7 @@ SAMPLEQUAL=$BASEDIR'QualFiltered/'$SAMPLE_SEQ_ID  # The output path and file pre
 # -Q disables quality filter, -L disables length filter, -A disables adapter trimming
 # Go to https://github.com/OpenGene/fastp for more information
 if $PE; then
-/programs/fastp/fastp --trim_poly_g -Q -L -A -i $SAMPLEADAPT'_AdapterClipped_F_paired.fastq.gz' -I SAMPLEADAPT'_AdapterClipped_R_paired.fastq.gz' -o $SAMPLEQUAL'_AdapterClipped_QualFiltered_F_paired.fastq.gz' -O $SAMPLEQUAL'_AdapterClipped_QualFiltered_R_paired.fastq.gz'
+/programs/fastp/fastp --trim_poly_g -Q -L -A -i $SAMPLEADAPT'_AdapterClipped_F_paired.fastq.gz' -I $SAMPLEADAPT'_AdapterClipped_R_paired.fastq.gz' -o $SAMPLEQUAL'_AdapterClipped_QualFiltered_F_paired.fastq.gz' -O $SAMPLEQUAL'_AdapterClipped_QualFiltered_R_paired.fastq.gz'
 else
 /programs/fastp/fastp --trim_poly_g -Q -L -A -i $SAMPLEADAPT'_AdapterClipped_SE.fastq.gz' -o $SAMPLEQUAL'_AdapterClipped_QualFiltered_SE.fastq.gz' 
 
