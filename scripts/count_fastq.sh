@@ -13,7 +13,7 @@ printf 'SampleID\tRawReads\tRawBases\tAdapterClippedBases\tQualFiltBases\n'
 
 # Loop over each sample in the sample table
 for SAMPLEFILE in `cat $SAMPLELIST`; do
-RAWFASTQFILES=$RAWFASTQDIR$SAMPLEFILE'*'  # The input path and file prefix
+RAWFASTQFILES=$RAWFASTQDIR$SAMPLEFILE'*fastq.gz'  # The input path and file prefix
 
 # Count the number of reads in raw fastq files. We only need to count the forward reads, since the reverse will contain exactly the same number of reads. fastq files contain 4 lines per read, so the number of total reads will be half of this line number. 
 RAWREADS=`zcat $RAWFASTQFILES | wc -l`
@@ -28,13 +28,13 @@ LANE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
 SAMPLE_SEQ_ID=$SAMPLE_ID'_'$SEQ_ID'_'$LANE_ID
 
 # Find all adapter clipped fastq files corresponding to this sample and store them in the object ADAPTERFILES.
-ADAPTERFILES=$BASEDIR'AdapterClipped/'$SAMPLE_SEQ_ID'_'*
+ADAPTERFILES=$BASEDIR'AdapterClipped/'$SAMPLE_SEQ_ID'*fastq.gz'
 
 # Count all bases in adapter clipped files. 
 ADPTERCLIPBASES=`zcat $ADAPTERFILES | grep -A 1 -E "^$SEQUENCER" | grep "^[ACGTN]" | tr -d "\n" | wc -m`
 
 # Find all quality trimmed fastq files corresponding to this sample and store them in the object QUALFILES.
-QUALFILES=$BASEDIR'QualFiltered/'$SAMPLE_SEQ_ID'_'*
+QUALFILES=$BASEDIR'QualFiltered/'$SAMPLE_SEQ_ID'*fastq.gz'
 
 # Count bases in quality trimmed files.
 QUALFILTPBASES=`zcat $QUALFILES | grep -A 1 -E "^$SEQUENCER" | grep "^[ACGTN]" | tr -d "\n" | wc -m`
