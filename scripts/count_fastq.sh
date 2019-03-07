@@ -40,6 +40,6 @@ QUALFILES=$BASEDIR'QualFiltered/'$SAMPLE_SEQ_ID'_'*
 QUALFILTPBASES=`zcat $QUALFILES | grep -A 1 -E "^$SEQUENCER" | grep "^[ACGTN]" | tr -d "\n" | wc -m`
 
 # Write the counts in appropriate order.
-printf "%s\t%s\t%s\t%s\t%s\n" $SAMPLE_ID $RAWREADS $RAWBASES $ADPTERCLIPBASES $QUALFILTPBASES
+printf "%s\t%s\t%s\t%s\t%s\n" $SAMPLE_ID $((RAWREADS/4)) $RAWBASES $ADPTERCLIPBASES $QUALFILTPBASES
 
 done
