@@ -7,7 +7,7 @@ SAMPLETABLE=$2 # Path to a sample table where the 1st column is the prefix of th
 RAWFASTQDIR=$3 # Path to raw fastq files. An example for the Greenland cod data is: /workdir/backup/cod/greenland_cod/fastq/
 BASEDIR=$4 # Path to the base directory where adapter clipped fastq file are stored in a subdirectory titled "adapter_clipped" and into which output files will be written to separate subdirectories. An example for the Greenland cod data is: /workdir/cod/greenland-cod
 SEQUENCER=$5 # Sequencer name that appears in the beginning of the first line in a fastq file. An example for the sturgeon data is: @HISEQ550
-QUALFILTERED=6 # Whether the sample has gone through quality filtering. true or false
+QUALFILTERED=$6 # Whether the sample has gone through quality filtering. true or false
 
 # Create headers for the output
 if $QUALFILTERED; then
