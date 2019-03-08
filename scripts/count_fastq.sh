@@ -56,4 +56,6 @@ else
 # Write the counts in appropriate order.
 printf "%s\t%s\t%s\t%s\n" $SAMPLE_SEQ_ID $((RAWREADS/4)) $RAWBASES $ADPTERCLIPBASES
 
+fi
+
 done
