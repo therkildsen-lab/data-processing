@@ -1,14 +1,14 @@
 #!/bin/bash
 
 ## This script is used to clip adapters. It can process both paired end and single end data. 
-SAMPLELIST=$1 # Path to a list of prefixes of the raw fastq files for paired end data, or a list of names of raw fastq files (with suffix) for single end data. It should be a subset of the the 1st column of the sample table.
-SAMPLETABLE=$2 # Path to a sample table where the 1st column is the prefix (paired end) or the name (single end) of the raw fastq files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. An example of such a sample table is: /workdir/Backup/WhiteSturgeon/SampleLists/SampleTable.txt
-RAWFASTQDIR=$3 # Path to raw fastq files. An example for the sturgeon data is: /workdir/Backup/WhiteSturgeon/Fastq/
-BASEDIR=$4 # Path to the base directory where adapter clipped fastq file are stored in a subdirectory titled "AdapterClipped" and into which output files will be written to separate subdirectories. An example for the sturgeon data is: /workdir/Sturgeon/
-RAWFASTQSUFFIX1=$5 # Suffix to forward raw fastq files. Use NA for single end. An example for the sturgeon data is: _1.txt.gz
-RAWFASTQSUFFIX2=$6 # Suffix to reverse raw fastq files. Use NA for single end. An example for the sturgeon data is: _2.txt.gz
+SAMPLELIST=$1 # Path to a list of prefixes of the raw fastq files for paired end data, or a list of names of raw fastq files (with suffix) for single end data. It should be a subset of the the 1st column of the sample table.  An example of such a sample list is /workdir/cod/greenland-cod/sample_lists/sample_list_pe_1.tsv
+SAMPLETABLE=$2 # Path to a sample table where the 1st column is the prefix (paired end) or the name (single end) of the raw fastq files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. An example of such a sample table is: /workdir/cod/greenland-cod/sample_lists/sample_table_pe.tsv
+RAWFASTQDIR=$3 # Path to raw fastq files. An example for the Greenland cod data is: /workdir/backup/cod/greenland_cod/fastq/
+BASEDIR=$4 # Path to the base directory where adapter clipped fastq file are stored in a subdirectory titled "AdapterClipped" and into which output files will be written to separate subdirectories. An example for the Greenland cod data is: /workdir/cod/greenland-cod
+RAWFASTQSUFFIX1=$5 # Suffix to raw fastq files. Use forward reads with paired-end data. An example for the Greenland paired-end data is: _R1.fastq.gz
+RAWFASTQSUFFIX2=$6 # Suffix to raw fastq files. Use reverse reads with paired-end data. An example for the Greenland paired-end data is: _R2.fastq.gz
 ADAPTERS=$7 # Path to a list of adapter/index sequences. For Nextera libraries: /workdir/Cod/ReferenceSeqs/NexteraPE_NT.fa For BEST libraries: /workdir/Cod/ReferenceSeqs/BEST.fa
-PE=$8 # Whether the data is pair end or single end. true or false.
+DATATYPE=$8 # Data type. pe for paired end data and se for single end data. 
 
 ##### RUN EACH SAMPLE THROUGH PIPELINE #######
 
@@ -23,17 +23,18 @@ LANE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
 SAMPLE_SEQ_ID=$SAMPLE_ID'_'$SEQ_ID'_'$LANE_ID  # When a sample has been sequenced in multiple lanes, we need to be able to identify the files from each run uniquely
 
 RAWFASTQ_ID=$RAWFASTQDIR$SAMPLEFILE  # The input path and file prefix
-SAMPLEADAPT=$BASEDIR'AdapterClipped/'$SAMPLE_SEQ_ID  # The output path and file prefix
+SAMPLEADAPT=$BASEDIR'adapter_clipped/'$SAMPLE_SEQ_ID  # The output path and file prefix
 
 #### ADAPTER CLIPPING THE READS ####
 
-if $PE; then
+if [ $DATATYPE = pe ]; then
 # Remove adapter sequence with Trimmomatic. 
 # The options for ILLUMINACLIP are: ILLUMINACLIP:<fastaWithAdaptersEtc>:<seed mismatches>:<palindrome clip threshold>:<simple clip threshold>:<minAdapterLength>:<keepBothReads>
 # For definitions of these options, see http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/TrimmomaticManual_V0.32.pdf
-java -jar /programs/trimmomatic/trimmomatic-0.36.jar PE -threads 18 -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $RAWFASTQ_ID$RAWFASTQSUFFIX2 $SAMPLEADAPT'_AdapterClipped_F_paired.fastq.gz' $SAMPLEADAPT'_AdapterClipped_F_unpaired.fastq.gz' $SAMPLEADAPT'_AdapterClipped_R_paired.fastq.gz' $SAMPLEADAPT'_AdapterClipped_R_unpaired.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10:1:true'
-else
-java -jar /programs/trimmomatic/trimmomatic-0.36.jar SE -threads 18 -phred33 $RAWFASTQ_ID $SAMPLEADAPT'_AdapterClipped_SE.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10'
+java -jar /programs/trimmomatic/trimmomatic-0.36.jar PE -threads 18 -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $RAWFASTQ_ID$RAWFASTQSUFFIX2 $SAMPLEADAPT'_adapter_clipped_f_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_f_unpaired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_unpaired.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10:1:true'
+
+else [ $DATATYPE = se ]
+java -jar /programs/trimmomatic/trimmomatic-0.36.jar SE -threads 18 -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $SAMPLEADAPT'_adapter_clipped_se.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10'
 fi
 
 done
