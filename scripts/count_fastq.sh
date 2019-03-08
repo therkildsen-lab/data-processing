@@ -10,7 +10,7 @@ SEQUENCER=$5 # Sequencer name that appears in the beginning of the first line in
 QUALFILTERED=6 # Whether the sample has gone through quality filtering. true or false
 
 # Create headers for the output
-if QUALFILTERED; then
+if $QUALFILTERED; then
 printf 'sample_seq_id\traw_reads\traw_bases\tadapter_clipped_bases\tqual_filtered_bases\n'
 else
 printf 'sample_seq_id\traw_reads\traw_bases\tadapter_clipped_bases\n'
@@ -39,7 +39,7 @@ ADAPTERFILES=$BASEDIR'adapter_clipped/'$SAMPLE_SEQ_ID'*.gz'
 ADPTERCLIPBASES=`zcat $ADAPTERFILES | grep -A 1 -E "^$SEQUENCER" | grep "^[ACGTN]" | tr -d "\n" | wc -m`
 
 # If reads are quality filtered, count quality filtered files.
-if QUALFILTERED; then
+if $QUALFILTERED; then
 
 # Find all quality trimmed fastq files corresponding to this sample and store them in the object QUALFILES.
 QUALFILES=$BASEDIR'qual_filtered/'$SAMPLE_SEQ_ID'*.gz'
