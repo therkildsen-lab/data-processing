@@ -10,27 +10,24 @@ RAWFASTQSUFFIX2=$6 # Suffix to raw fastq files. Use reverse reads with paired-en
 ADAPTERS=$7 # Path to a list of adapter/index sequences. For Nextera libraries: /workdir/cod/reference_seqs/NexteraPE_NT.fa For BEST libraries: /workdir/cod/reference_seqs/BEST.fa
 DATATYPE=$8 # Data type. pe for paired end data and se for single end data. 
 
-##### RUN EACH SAMPLE THROUGH PIPELINE #######
 
-# Loop over each sample
+## Loop over each sample
 for SAMPLEFILE in `cat $SAMPLELIST`; do
 
-# Extract relevant values from a table of sample, sequencing, and lane ID (here in columns 4, 3, 2, respectively) for each sequenced library
+## Extract relevant values from a table of sample, sequencing, and lane ID (here in columns 4, 3, 2, respectively) for each sequenced library
 SAMPLE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 4`
 SEQ_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 3`
 LANE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
-
 SAMPLE_SEQ_ID=$SAMPLE_ID'_'$SEQ_ID'_'$LANE_ID  # When a sample has been sequenced in multiple lanes, we need to be able to identify the files from each run uniquely
 
-RAWFASTQ_ID=$RAWFASTQDIR$SAMPLEFILE  # The input path and file prefix
-SAMPLEADAPT=$BASEDIR'adapter_clipped/'$SAMPLE_SEQ_ID  # The output path and file prefix
+## The input and output path and file prefix
+RAWFASTQ_ID=$RAWFASTQDIR$SAMPLEFILE
+SAMPLEADAPT=$BASEDIR'adapter_clipped/'$SAMPLE_SEQ_ID
 
-#### ADAPTER CLIPPING THE READS ####
-
-if [ $DATATYPE = pe ]; then
-# Remove adapter sequence with Trimmomatic. 
+## Adapter clip the reads with Trimmomatic
 # The options for ILLUMINACLIP are: ILLUMINACLIP:<fastaWithAdaptersEtc>:<seed mismatches>:<palindrome clip threshold>:<simple clip threshold>:<minAdapterLength>:<keepBothReads>
 # For definitions of these options, see http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/TrimmomaticManual_V0.32.pdf
+if [ $DATATYPE = pe ]; then
 java -jar /programs/trimmomatic/trimmomatic-0.36.jar PE -threads 18 -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $RAWFASTQ_ID$RAWFASTQSUFFIX2 $SAMPLEADAPT'_adapter_clipped_f_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_f_unpaired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_unpaired.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10:1:true'
 
 else [ $DATATYPE = se ]
