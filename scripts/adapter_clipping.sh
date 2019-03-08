@@ -1,13 +1,13 @@
 #!/bin/bash
 
 ## This script is used to clip adapters. It can process both paired end and single end data. 
-SAMPLELIST=$1 # Path to a list of prefixes of the raw fastq files for paired end data, or a list of names of raw fastq files (with suffix) for single end data. It should be a subset of the the 1st column of the sample table.  An example of such a sample list is /workdir/cod/greenland-cod/sample_lists/sample_list_pe_1.tsv
-SAMPLETABLE=$2 # Path to a sample table where the 1st column is the prefix (paired end) or the name (single end) of the raw fastq files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. An example of such a sample table is: /workdir/cod/greenland-cod/sample_lists/sample_table_pe.tsv
+SAMPLELIST=$1 # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table. An example of such a sample list is /workdir/cod/greenland-cod/sample_lists/sample_list_pe_1.tsv
+SAMPLETABLE=$2 # Path to a sample table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. An example of such a sample table is: /workdir/cod/greenland-cod/sample_lists/sample_table_pe.tsv
 RAWFASTQDIR=$3 # Path to raw fastq files. An example for the Greenland cod data is: /workdir/backup/cod/greenland_cod/fastq/
-BASEDIR=$4 # Path to the base directory where adapter clipped fastq file are stored in a subdirectory titled "AdapterClipped" and into which output files will be written to separate subdirectories. An example for the Greenland cod data is: /workdir/cod/greenland-cod
+BASEDIR=$4 # Path to the base directory where adapter clipped fastq file are stored in a subdirectory titled "adapter_clipped" and into which output files will be written to separate subdirectories. An example for the Greenland cod data is: /workdir/cod/greenland-cod
 RAWFASTQSUFFIX1=$5 # Suffix to raw fastq files. Use forward reads with paired-end data. An example for the Greenland paired-end data is: _R1.fastq.gz
 RAWFASTQSUFFIX2=$6 # Suffix to raw fastq files. Use reverse reads with paired-end data. An example for the Greenland paired-end data is: _R2.fastq.gz
-ADAPTERS=$7 # Path to a list of adapter/index sequences. For Nextera libraries: /workdir/Cod/ReferenceSeqs/NexteraPE_NT.fa For BEST libraries: /workdir/Cod/ReferenceSeqs/BEST.fa
+ADAPTERS=$7 # Path to a list of adapter/index sequences. For Nextera libraries: /workdir/cod/reference_seqs/NexteraPE_NT.fa For BEST libraries: /workdir/cod/reference_seqs/BEST.fa
 DATATYPE=$8 # Data type. pe for paired end data and se for single end data. 
 
 ##### RUN EACH SAMPLE THROUGH PIPELINE #######
