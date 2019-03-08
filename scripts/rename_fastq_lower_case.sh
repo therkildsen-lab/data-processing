@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ## This script is used to rename fastq files into lower cases
-SAMPLELIST=$1 # Path to a list of prefixes of the raw fastq files. It can be a subset of the the 1st column of the sample table.
+SAMPLELIST=$1 # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table. An example of such a sample list is /workdir/cod/greenland-cod/sample_lists/sample_list_pe_1.tsv
 SAMPLETABLE=$2 # Path to a tab-delimitated sample table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. An example of such a sample table is: /workdir/cod/greenland-cod/sample_lists/sample_table_pe.tsv
 BASEDIR=$3 # Path to the base directory where adapter clipped fastq file are stored in a subdirectory titled "adapter_clipped" and into which output files will be written to separate subdirectories. An example for the Greenland cod data is: /workdir/cod/greenland-cod
 DATATYPE=$4 # Data type. pe for paired end data and se for single end data. 
