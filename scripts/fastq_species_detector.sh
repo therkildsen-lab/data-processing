@@ -37,7 +37,7 @@ ECUT=$4
 SCRIPTDIR=`dirname "$BASH_SOURCE"`
 
 echo Subsampling fastq
-$SCRIPTDIR/subsample_fastq.pl $FASTQ $SAMPREADS fasta >& $FASTQ.tst.fa
+/workdir/data-processing/scripts/subsample_fastq.pl $FASTQ $SAMPREADS fasta >& $FASTQ.tst.fa
 
 echo Runing BLAST
 #blastn -num_threads 5 -db $BLASTDB/nt -query $FASTQ.tst.fa -out $FASTQ.blast  -outfmt "6 std staxids sscinames scomnames sblastnames"
@@ -48,4 +48,4 @@ mv $FASTQ.blast.sorted $FASTQ.blast
 echo Counting reads
 echo Species detected in file $FASTQ > $FASTQ.species_stats
 echo based on $SAMPREADS uniformly sampled reads >> $FASTQ.species_stats
-$SCRIPTDIR/count_species.pl $FASTQ.blast $ECUT >> $FASTQ.species_stats 2>&1
+/workdir/data-processing/scripts/count_species.pl $FASTQ.blast $ECUT >> $FASTQ.species_stats 2>&1
