@@ -28,13 +28,13 @@ if [ $DATATYPE = pe ]
 then
 	if [ $FILTER = polyg ]; then
 		/programs/fastp/fastp --trim_poly_g -Q -L -A -i $SAMPLEADAPT'_adapter_clipped_f_paired.fastq.gz' -I $SAMPLEADAPT'_adapter_clipped_r_paired.fastq.gz' -o $SAMPLEQUAL'_adapter_clipped_qual_filtered_f_paired.fastq.gz' -O $SAMPLEQUAL'_adapter_clipped_qual_filtered_r_paired.fastq.gz'
-	else [ $FILTER = quality ]; then		
+	else [ $FILTER = quality ]	
 		/programs/fastp/fastp -r --cut_window_size 10 --cut_mean_quality 15 -L -Q -A -i $SAMPLEADAPT'_adapter_clipped_f_paired.fastq.gz' -I $SAMPLEADAPT'_adapter_clipped_r_paired.fastq.gz' -o $SAMPLEQUAL'_adapter_clipped_qual_filtered_f_paired.fastq.gz' -O $SAMPLEQUAL'_adapter_clipped_qual_filtered_r_paired.fastq.gz'
 	fi
 else [ $DATATYPE = se ]
 	if [ $FILTER = polyg ]; then
 		/programs/fastp/fastp --trim_poly_g -Q -L -A -i $SAMPLEADAPT'_adapter_clipped_se.fastq.gz' -o $SAMPLEQUAL'_adapter_clipped_qual_filtered_se.fastq.gz' 
-	else [ $FILTER = quality ]; then		
+	else [ $FILTER = quality ]
 		/programs/fastp/fastp -r --cut_window_size 10 --cut_mean_quality 15 -L -A -i $SAMPLEADAPT'_adapter_clipped_se.fastq.gz' -o $SAMPLEQUAL'_adapter_clipped_qual_filtered_se.fastq.gz' 
 	fi
 fi
