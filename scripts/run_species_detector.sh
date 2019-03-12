@@ -34,6 +34,3 @@ bash /workdir/data-processing/scripts/fastq_species_detector.sh  $SAMPLETOBLAST$
 fi
 
 done
-
-# Example
-# nohup bash /workdir/data-processing/scripts/run_species_detector.sh /workdir/cod/greenland-cod/sample_lists/sample_list_pe_1_test.tsv /workdir/cod/greenland-cod/sample_lists/sample_table_pe.tsv  /workdir/cod/greenland-cod/qual_filtered/ _adapter_clipped_qual_filtered_f_paired.fastq.gz _adapter_clipped_qual_filtered_r_paired.fastq.gz pe 1000 "1e-10" > /workdir/cod/greenland-cod/nohups/run_species_detecter_pe_2_test.nohup &
