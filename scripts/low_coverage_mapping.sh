@@ -9,8 +9,8 @@ FASTQSUFFIX1=$5 # Suffix to fastq files. Use forward reads with paired-end data.
 FASTQSUFFIX2=$6 # Suffix to fastq files. Use reverse reads with paired-end data. An example for the quality-filtered Greenland paired-end data is: _adapter_clipped_qual_filtered_r_paired.fastq.gz
 DATATYPE=$7 # Data type. pe for paired end data and se for single end data. 
 MAPPINGPRESET=$8 # The pre-set option to use for mapping in bowtie2 (very-sensitive for end-to-end (global) mapping [typically used when we have a full genome reference], very-sensitive-local for partial read mapping that allows soft-clipping [typically used when mapping genomic reads to a transcriptome]
-REFERENCE=$9 # path to reference fasta file and file name, e.g /workdir/cod/reference_seqs/gadMor2.fasta
-REFNAME=${10} # reference name to add to output files, e.g. gadMor2
+REFERENCE=$9 # Path to reference fasta file and file name, e.g /workdir/cod/reference_seqs/gadMor2.fasta
+REFNAME=${10} # Reference name to add to output files, e.g. gadMor2
 
 ## Loop over each sample
 for SAMPLEFILE in `cat $SAMPLELIST`; do
