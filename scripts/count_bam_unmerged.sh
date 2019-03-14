@@ -1,22 +1,27 @@
 #!/bin/bash
 
-SAMPLETABLE=$1 # This is actually the sample table!
+SAMPLELIST=$1 # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table. An example of such a sample list is /workdir/cod/greenland-cod/sample_lists/sample_list_pe_1.tsv
+SAMPLETABLE=$2 # Path to a sample table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. An example of such a sample table is: /workdir/cod/greenland-cod/sample_lists/sample_table_pe.tsv
+BASEDIR=$3 # Path to the base directory where adapter clipped fastq file are stored in a subdirectory titled "adapter_clipped" and into which output files will be written to separate subdirectories. An example for the Greenland cod data is: /workdir/cod/greenland-cod
+DATATYPE=$4 # Data type. pe for paired end data and se for single end data. 
+REFNAME=$5 # Reference name to add to output files, e.g. gadMor2
 
-printf 'SampleID\tMappedBases\tQualFiltMappedBases\n'
-for LINE in `cat $SAMPLETABLE | cut -f1`; do
+printf 'sample_id\tmapped_bases\tqual_filtered_mapped_bases\n'
 
-SAMPLEFILE='/workdir/Backup/WhiteSturgeon/Fastq/'$LINE'_1.txt.gz'
+for SAMPLEFILE in `cat $SAMPLELIST`; do
 
-SAMPLE=`grep "^${LINE}" $SAMPLETABLE | cut -f4`
-SEQID=`grep "^${LINE}" $SAMPLETABLE | cut -f2`
+# Extract relevant values from a table of sample, sequencing, and lane ID (here in columns 4, 3, 2, respectively) for each sequenced library
+SAMPLE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 4`
+SEQ_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 3`
+LANE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
+SAMPLE_SEQ_ID=$SAMPLE_ID'_'$SEQ_ID'_'$LANE_ID
 
-RAWBAMFILE='/workdir/Sturgeon/BamFiles/'$SAMPLE'_'$SEQID'_Paired_bt2_AciTrans1.bam'
-MAPPEDBASES=`samtools view $RAWBAMFILE | cut -f 10 | wc | awk '{printf $3-$1}'`
-QUALFILTBAMFILE='/workdir/Sturgeon/BamFiles/'$SAMPLE'_'$SEQID'_Paired_bt2_AciTrans1_MinQ20_sorted.bam'
-QUAFILTBASES=`samtools view $QUALFILTBAMFILE | cut -f 10 | wc | awk '{printf $3-$1}'`
+RAWBAMFILE=$BASEDIR'bam/'$SAMPLE_SEQ_ID'_'$DATATYPE'_bt2_'$REFNAME'.bam'
+MAPPEDBASES=`samtools stats $RAWBAMFILE | grep ^SN | cut -f 2- | grep "^bases mapped (cigar)" | cut -f 2`
 
-printf "%s\t%s\t%s\n" $SAMPLE $MAPPEDBASES $QUAFILTBASES
+QUALFILTBAMFILE=$BASEDIR'bam/'$SAMPLE_SEQ_ID'_'$DATATYPE'_bt2_'$REFNAME'_minq20_sorted.bam'
+QUAFILTBASES=`samtools stats $QUALFILTBAMFILE | grep ^SN | cut -f 2- | grep "^bases mapped (cigar)" | cut -f 2`
+
+printf "%s\t%s\t%s\n" $SAMPLE_SEQ_ID $MAPPEDBASES $QUAFILTBASES
 
 done
-
-# nohup bash /workdir/Sturgeon/ShellScripts/GetUnmergedMappedReadCounts.sh /workdir/Backup/WhiteSturgeon/SampleLists/SampleTable.txt >& /workdir/Sturgeon/ShellScripts/GetUnmergedMappedReadCounts.nohup &
