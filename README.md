@@ -1,7 +1,12 @@
 # data-processing
+
 Scripts for going from raw .fastq files to processed and quality-checked .bam files for downstream analysis
 
+## Location of this repository
+
 If you are working on the Therkildsen lab server, this GitHub repository is located at `/workdir/data-processing/`. Otherwise, clone this repo to the machine that you are working. 
+
+## Get started
 
 As a first step, you should create a project directory (referred to as `BASEDIR` in certain scripts), with the following subdirectories:
 
@@ -28,3 +33,6 @@ It is recommended that you make this project directory a separate GitHub reposit
 
 An example of the workflow: https://github.com/therkildsen-lab/greenland-cod/blob/master/markdowns/data_processing.md
 
+## A few suggestions
+
+1. Avoid using Excel to edit your sample tables and lists unless you know what you are doing, since it may lead to weird line ending issues. If you are encoutering such issues, read the file using R and write it again using functions such as `write_tsv()`
