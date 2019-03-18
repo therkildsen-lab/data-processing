@@ -2,15 +2,14 @@
 
 ## This script is used to quality filter and trim poly g tails. It can process both paired end and single end data. 
 SAMPLELIST=$1 # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table. An example of such a sample list is /workdir/cod/greenland-cod/sample_lists/sample_list_pe_1.tsv
-SAMPLETABLE=$2 # Path to a sample table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. An example of such a sample table is: /workdir/cod/greenland-cod/sample_lists/sample_table_pe.tsv
+SAMPLETABLE=$2 # Path to a sample table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. The 6th column should be data type, which is either pe or se. An example of such a sample table is: /workdir/cod/greenland-cod/sample_lists/sample_table.tsv
 FASTQDIR=$3 # Path to the directory where fastq file are stored. An example for the quality-filtered Greenland pe data is: /workdir/cod/greenland-cod/qual_filtered/
 BASEDIR=$4 # Path to the base directory where adapter clipped fastq file are stored in a subdirectory titled "adapter_clipped" and into which output files will be written to separate subdirectories. An example for the Greenland cod data is: /workdir/cod/greenland-cod
 FASTQSUFFIX1=$5 # Suffix to fastq files. Use forward reads with paired-end data. An example for the quality-filtered Greenland paired-end data is: _adapter_clipped_qual_filtered_f_paired.fastq.gz
 FASTQSUFFIX2=$6 # Suffix to fastq files. Use reverse reads with paired-end data. An example for the quality-filtered Greenland paired-end data is: _adapter_clipped_qual_filtered_r_paired.fastq.gz
-DATATYPE=$7 # Data type. pe for paired end data and se for single end data. 
-MAPPINGPRESET=$8 # The pre-set option to use for mapping in bowtie2 (very-sensitive for end-to-end (global) mapping [typically used when we have a full genome reference], very-sensitive-local for partial read mapping that allows soft-clipping [typically used when mapping genomic reads to a transcriptome]
-REFERENCE=$9 # Path to reference fasta file and file name, e.g /workdir/cod/reference_seqs/gadMor2.fasta
-REFNAME=${10} # Reference name to add to output files, e.g. gadMor2
+MAPPINGPRESET=$7 # The pre-set option to use for mapping in bowtie2 (very-sensitive for end-to-end (global) mapping [typically used when we have a full genome reference], very-sensitive-local for partial read mapping that allows soft-clipping [typically used when mapping genomic reads to a transcriptome]
+REFERENCE=$8 # Path to reference fasta file and file name, e.g /workdir/cod/reference_seqs/gadMor2.fasta
+REFNAME=$9 # Reference name to add to output files, e.g. gadMor2
 
 ## Loop over each sample
 for SAMPLEFILE in `cat $SAMPLELIST`; do
@@ -20,6 +19,9 @@ SAMPLE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 4`
 SEQ_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 3`
 LANE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
 SAMPLE_SEQ_ID=$SAMPLE_ID'_'$SEQ_ID'_'$LANE_ID
+
+## Extract data type from the sample table
+DATATYPE=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 6`
 
 ## The input and output path and file prefix
 SAMPLETOMAP=$FASTQDIR$SAMPLE_SEQ_ID

@@ -3,13 +3,12 @@
 # This script is used to detect the species compsition of adaptor clipped sequences in fastq.gz format. It is intended for pair end reads.
 
 SAMPLELIST=$1 # Path to a list of prefixes of the raw fastq files. It should be a subset of the the 1st column of the sample table. An example of such a sample list is /workdir/cod/greenland-cod/sample_lists/sample_list_pe_1.tsv
-SAMPLETABLE=$2 # Path to a sample table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. An example of such a sample table is: /workdir/cod/greenland-cod/sample_lists/sample_table_pe.tsv
+SAMPLETABLE=$2 # Path to a sample table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. The 6th column should be data type, which is either pe or se. An example of such a sample table is: /workdir/cod/greenland-cod/sample_lists/sample_table.tsv
 FASTQDIR=$3 # Path to the directory where fastq file are stored. An example for the quality-filtered Greenland data is: /workdir/cod/greenland-cod/qual_filtered/
 FASTQSUFFIX1=$4 # Suffix to fastq files. Use forward reads with paired-end data. An example for the quality-filtered Greenland paired-end data is: _adapter_clipped_qual_filtered_f_paired.fastq.gz
 FASTQSUFFIX2=$5 # Suffix to fastq files. Use reverse reads with paired-end data. An example for the quality-filtered Greenland paired-end data is: _adapter_clipped_qual_filtered_r_paired.fastq.gz
-DATATYPE=$6 # Data type. pe for paired end data and se for single end data. 
-SAMPREADS=$7 # Number of reads to sample per fastq file, e.g. 2000
-ECUT=$8 # E-value cut off, e.g. "1e-20"
+SAMPREADS=$6 # Number of reads to sample per fastq file, e.g. 2000
+ECUT=$7 # E-value cut off, e.g. "1e-20"
 
 ##### RUN EACH SAMPLE THROUGH PIPELINE #######
 
@@ -23,6 +22,9 @@ LANE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
 SAMPLE_SEQ_ID=$SAMPLE_ID'_'$SEQ_ID'_'$LANE_ID  # When a sample has been sequenced in multiple lanes, we need to be able to identify the files from each run uniquely
 
 SAMPLETOBLAST=$FASTQDIR$SAMPLE_SEQ_ID  # The input path and file base name
+
+## Extract data type from the sample table
+DATATYPE=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 6`
 
 ## Run fastq_species_detector.sh
 if [ $DATATYPE = pe ]; then
