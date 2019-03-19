@@ -10,7 +10,7 @@ REFNAME=$4 # Reference name to add to output files, e.g. gadMor2
 for SAMPLEBAM in `cat $BAMLIST`; do
 
 ## Extract the file name prefix for this sample
-SAMPLEPREFIX = echo $SAMPLEBAM | sed 's/_bt2_.*//' | sed -e 's#.*/bam/\(\)#\1#'
+SAMPLEPREFIX=`echo $SAMPLEBAM | sed 's/_bt2_.*//' | sed -e 's#.*/bam/\(\)#\1#'`
 
 ## Remove duplicates and print dupstat file
 # We used to be able to just specify picard.jar on the CBSU server, but now we need to specify the path and version
