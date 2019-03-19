@@ -18,7 +18,7 @@ java -Xmx60g -jar /programs/picard-tools-2.9.0/picard.jar MarkDuplicates I=$SAMP
 
 DATATYPE=`grep -P "${SAMPLEPREFIX}\t" $SAMPLETABLE | cut -f 6`
 
-if [ $DATATYPE!=se ]; then
+if [ $DATATYPE != se ]; then
 ## Clip overlapping paired end reads (only necessary for paired end data)
 /programs/bamUtil/bam clipOverlap --in $BASEDIR'bam/'$SAMPLEPREFIX'_bt2_'$REFNAME'_minq20_sorted_dedup.bam' --out $BASEDIR'bam/'$SAMPLEPREFIX'_bt2_'$REFNAME'_minq20_sorted_dedup_overlapclipped.bam' --stats
 fi
