@@ -16,6 +16,7 @@ SAMPLEPREFIX=`echo $SAMPLEBAM | sed 's/_bt2_.*//' | sed -e 's#.*/bam/\(\)#\1#'`
 # We used to be able to just specify picard.jar on the CBSU server, but now we need to specify the path and version
 java -Xmx60g -jar /programs/picard-tools-2.9.0/picard.jar MarkDuplicates I=$SAMPLEBAM O=$BASEDIR'bam/'$SAMPLEPREFIX'_bt2_'$REFNAME'_minq20_sorted_dedup.bam' M=$BASEDIR'bam/'$SAMPLEPREFIX'_bt2_'$REFNAME'_minq20_sorted_dupstat.txt' VALIDATION_STRINGENCY=SILENT REMOVE_DUPLICATES=true
 
+## Extract data type from the merged sample table
 DATATYPE=`grep -P "${SAMPLEPREFIX}\t" $SAMPLETABLE | cut -f 6`
 
 if [ $DATATYPE != se ]; then
