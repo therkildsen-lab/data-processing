@@ -9,8 +9,12 @@ REFNAME=$4 # Reference name to add to output files, e.g. gadMor2
 ## Loop over each sample
 for SAMPLEBAM in `cat $BAMLIST`; do
 
-## Index bam files
-samtools index $SAMPLEBAM
+if [ -e $SAMPLEBAM'.bai' ]; then
+	echo "the file already exists"
+else
+	## Index bam files
+	samtools index $SAMPLEBAM
+fi
 
 done
 
