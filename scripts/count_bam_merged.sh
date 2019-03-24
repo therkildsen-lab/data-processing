@@ -1,19 +1,36 @@
 #!/bin/bash
 
-SAMPLETABLE=$1 # This is actually the sample table!
+# This script is used to count bam files after merging. These include deduplication and overlap clipping (paired-end data only)
+BAMLIST=$1 # Path to a list of merged bam files. Full paths should be included. An example of such a bam list is /workdir/cod/greenland-cod/sample_lists/bam_list_merged.tsv
+SAMPLETABLE=$2 # Path to a sample table where the 1st column is the prefix of the MERGED bam files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The 5th column is population name and 6th column is the data type. An example of such a sample table is: /workdir/cod/greenland-cod/sample_lists/sample_table_merged.tsv
+BASEDIR=$3 # Path to the base directory where adapter clipped fastq file are stored in a subdirectory titled "adapter_clipped" and into which output files will be written to separate subdirectories. An example for the Greenland cod data is: /workdir/cod/greenland-cod
+REFNAME=$4 # Reference name to add to output files, e.g. gadMor2
 
-printf 'SampleID\tDedupMappedBases\tAvgFragmentSize\tOverlapClippedBases\n'
-for LINE in `cat $SAMPLETABLE | cut -f1`; do
+printf 'sample_id\tdedup_mapped_bases\tavg_fragment_size\toverlap_clipped_bases\n'
 
-DEDUPFILE='/workdir/Sturgeon/BamFiles/'$LINE'_Paired_bt2_AciTrans1_MinQ20_sorted_merged_dedup.bam'
-DEDUPMAPPEDBASES=`samtools view $DEDUPFILE | cut -f 10 | wc | awk '{printf $3-$1}'`
+for SAMPLEBAM in `cat $BAMLIST`; do
+
+## Extract the file name prefix for this sample
+SAMPLEPREFIX=`echo $SAMPLEBAM | sed 's/_bt2_.*//' | sed -e 's#.*/bam/\(\)#\1#'`
+
+## Count deduplicated bases
+DEDUPFILE=$BASEDIR'bam/'$SAMPLEPREFIX'_bt2_'$REFNAME'_minq20_sorted_dedup.bam'
+DEDUPMAPPEDBASES=`samtools stats $DEDUPFILE | grep ^SN | cut -f 2- | grep "^bases mapped (cigar)" | cut -f 2`
+
+## Extract data type from the merged sample table
+DATATYPE=`grep -P "${SAMPLEPREFIX}\t" $SAMPLETABLE | cut -f 6`
+
+if [ $DATATYPE != se ]; then
+## Calculate average fragment length for paired end reads
 AVGFRAG=`samtools view $DEDUPFILE | awk '{sum+=sqrt($9^2)} END {printf "%f", sum/NR}'`
-
-CLIPOVERLAPFILE='/workdir/Sturgeon/BamFiles/'$LINE'_Paired_bt2_AciTrans1_MinQ20_sorted_merged_dedup_clipOverlap.bam'
+## Count overlap clipped bam files for paired end reads 
+CLIPOVERLAPFILE=$BASEDIR'bam/'$SAMPLEPREFIX'_bt2_'$REFNAME'_minq20_sorted_dedup_overlapclipped.bam'
 CLIPOVERLAPBASES=`samtools stats $CLIPOVERLAPFILE | grep ^SN | cut -f 2- | grep "^bases mapped (cigar)" | cut -f 2`
+else
+AVGFRAG=NA
+CLIPOVERLAPBASES=NA
+fi
 
-printf "%s\t%s\t%s\t%s\n" $LINE $DEDUPMAPPEDBASES $AVGFRAG $CLIPOVERLAPBASES
+printf "%s\t%s\t%s\t%s\n" $SAMPLEPREFIX $DEDUPMAPPEDBASES $AVGFRAG $CLIPOVERLAPBASES
 
 done
-
-# nohup bash /workdir/Sturgeon/ShellScripts/GetMergedMappedReadCounts.sh /workdir/Sturgeon/SampleLists/SampleTable_merged.txt >& /workdir/Sturgeon/ShellScripts/MergedMappedReadCounts.nohup &
