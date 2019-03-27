@@ -8,7 +8,7 @@ BASEDIR=$2 # Path to the base directory where adapter clipped fastq file are sto
 samtools depth `cat $BAMLIST` > $BASEDIR'sample_lists/depth_per_position_per_sample.tsv'
 ## Convert depth to presence/absence
 awk -f convert_count_to_presence.awk `cut --complement -f 1,2 $BASEDIR'sample_lists/depth_per_position_per_sample.tsv'` > $BASEDIR'sample_lists/presence_per_position_per_sample.tsv'
-## Count sum of per position depth across samples
-awk -f /workdir/data-processing/scripts/sum_by_row.awk `cut --complement -f 1,2 $BASEDIR'sample_lists/depth_per_position_per_sample.tsv'` > $BASEDIR'sample_lists/depth_per_position_all_samples.tsv'
-## Count sum of per position depth across samples
-awk -f /workdir/data-processing/scripts/sum_by_row.awk $BASEDIR'sample_lists/presence_per_position_per_sample.tsv' > $BASEDIR'sample_lists/presence_per_position_all_samples.tsv'
+## Count sum of per position depth over all samples
+awk -f /workdir/data-processing/scripts/sum_by_row.awk `cut --complement -f 1,2 $BASEDIR'sample_lists/depth_per_position_per_sample.tsv'` > $BASEDIR'sample_lists/depth_per_position_sum_over_all_samples.tsv'
+## Count sum of per position presence over all samples
+awk -f /workdir/data-processing/scripts/sum_by_row.awk $BASEDIR'sample_lists/presence_per_position_per_sample.tsv' > $BASEDIR'sample_lists/presence_per_position_sum_over_all_samples.tsv'
