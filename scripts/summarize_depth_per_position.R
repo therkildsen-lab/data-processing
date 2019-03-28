@@ -1,13 +1,13 @@
 args <- commandArgs(trailingOnly = TRUE)
-BAMLIST <- args[1]
-SAMPLETABLE <- args[2]
-BASEDIR <- args[3]
+BAMLIST <- args[1] # Path to a list of merged bam files. Full paths should be included. An example of such a bam list is /workdir/cod/greenland-cod/sample_lists/bam_list_merged.tsv
+SAMPLETABLE <- args[2] # Path to a sample table where the 1st column is the prefix of the MERGED bam files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The 5th column is population name and 6th column is the data type. An example of such a sample table is: /workdir/cod/greenland-cod/sample_lists/sample_table_merged.tsv
+BASEDIR <- args[3] # Path to the base directory where adapter clipped fastq file are stored in a subdirectory titled "adapter_clipped" and into which output files will be written to separate subdirectories. An example for the Greenland cod data is: /workdir/cod/greenland-cod/
 
 library(tidyverse)
 library(data.table)
 bam_list <- read_tsv(BAMLIST, col_names = F)$X1
 sample_table <- read_tsv(SAMPLETABLE)
-for (i in 1:3){
+for (i in 1:length(bam_list)){
   print(i)
   depth <- fread(paste0(bam_list[i], ".depth"))$V1
   mean_depth <- mean(depth)
@@ -24,14 +24,14 @@ for (i in 1:3){
     total_presence <- total_presence + presence
   }
 }
-write_tsv(output, paste0(BASEDIR, "sample_lists/depth_per_position_per_sample.tsv"))
-write_lines(total_depth, paste0(BASEDIR, "sample_lists/depth_per_position_all_samples.txt"))
-write_lines(total_presence, paste0(BASEDIR, "sample_lists/presence_per_position_all_samples.txt"))
+write_tsv(output, paste0(BASEDIR, "sample_lists/depth_per_position_per_sample_summary.tsv"))
+write_lines(total_depth, paste0(BASEDIR, "sample_lists/depth_per_position_all_samples.depth"))
+write_lines(total_presence, paste0(BASEDIR, "sample_lists/presence_per_position_all_samples.depth"))
 
 # Total Depth per Site across All Individuals (on server)
-total_depth <- fread(paste0(BASEDIR, "sample_lists/depth_per_position_all_samples.txt"))
-total_presence <- fread(paste0(BASEDIR, "sample_lists/presence_per_position_all_samples.txt"))
+total_depth <- fread(paste0(BASEDIR, "sample_lists/depth_per_position_all_samples.depth"))
+total_presence <- fread(paste0(BASEDIR, "sample_lists/presence_per_position_all_samples.depth"))
 total_depth_summary <- count(total_depth, by=V1)
 total_presence_summary <- count(total_presence, by=V1)
-write_tsv(total_depth_summary, paste0(BASEDIR, "sample_lists/depth_per_position_all_samples_summary.tsv"))
-write_tsv(total_presence_summary, paste0(BASEDIR, "sample_lists/presence_per_position_all_samples_summary.tsv"))
+write_tsv(total_depth_summary, paste0(BASEDIR, "sample_lists/depth_per_position_all_samples_histogram.tsv"))
+write_tsv(total_presence_summary, paste0(BASEDIR, "sample_lists/presence_per_position_all_samples_histogram.tsv"))
