@@ -2,7 +2,7 @@
 
 ## This script is used to quality filter and trim poly g tails. It can process both paired end and single end data. 
 BAMLIST=$1 # Path to a list of merged, deduplicated, and overlap clipped bam files. Full paths should be included. An example of such a bam list is /workdir/cod/greenland-cod/sample_lists/bam_list_1.tsv
-BASEDIR=$2 # Path to the base directory where adapter clipped fastq file are stored in a subdirectory titled "adapter_clipped" and into which output files will be written to separate subdirectories. An example for the Greenland cod data is: /workdir/cod/greenland-cod
+BASEDIR=$2 # Path to the base directory where adapter clipped fastq file are stored in a subdirectory titled "adapter_clipped" and into which output files will be written to separate subdirectories. An example for the Greenland cod data is: /workdir/cod/greenland-cod/
 REFERENCE=$3 # Path to reference fasta file and file name, e.g /workdir/cod/reference_seqs/gadMor2.fasta
 REFNAME=$4 # Reference name to add to output files, e.g. gadMor2
 
