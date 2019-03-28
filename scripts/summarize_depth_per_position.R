@@ -1,3 +1,6 @@
+## This script is used to summarize all the individual bam depth files, 
+# It will come up with summary statistics for each individual as well per position depth and presence/absence summed across all individuals
+
 args <- commandArgs(trailingOnly = TRUE)
 BAMLIST <- args[1] # Path to a list of merged bam files. Full paths should be included. An example of such a bam list is /workdir/cod/greenland-cod/sample_lists/bam_list_merged.tsv
 SAMPLETABLE <- args[2] # Path to a sample table where the 1st column is the prefix of the MERGED bam files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The 5th column is population name and 6th column is the data type. An example of such a sample table is: /workdir/cod/greenland-cod/sample_lists/sample_table_merged.tsv
