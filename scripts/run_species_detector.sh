@@ -30,9 +30,18 @@ DATATYPE=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 6`
 if [ $DATATYPE = pe ]; then
 bash /workdir/data-processing/scripts/fastq_species_detector.sh  $SAMPLETOBLAST$FASTQSUFFIX1  /workdir/my_db $SAMPREADS $ECUT
 bash /workdir/data-processing/scripts/fastq_species_detector.sh  $SAMPLETOBLAST$FASTQSUFFIX2  /workdir/my_db $SAMPREADS $ECUT
+mv $SAMPLETOBLAST$FASTQSUFFIX1'.species_stats' $FASTQDIR'../species_stats/'
+mv $SAMPLETOBLAST$FASTQSUFFIX1'.blast' $FASTQDIR'../species_stats/'
+mv $SAMPLETOBLAST$FASTQSUFFIX1'.tst.fa' $FASTQDIR'../species_stats/'
+mv $SAMPLETOBLAST$FASTQSUFFIX2'.species_stats' $FASTQDIR'../species_stats/'
+mv $SAMPLETOBLAST$FASTQSUFFIX2'.blast' $FASTQDIR'../species_stats/'
+mv $SAMPLETOBLAST$FASTQSUFFIX2'.tst.fa' $FASTQDIR'../species_stats/'
 
 else [ $DATATYPE = se ]
 bash /workdir/data-processing/scripts/fastq_species_detector.sh  $SAMPLETOBLAST$FASTQSUFFIX1  /workdir/my_db $SAMPREADS $ECUT
+mv $SAMPLETOBLAST$FASTQSUFFIX1'.species_stats' $FASTQDIR'../species_stats/'
+mv $SAMPLETOBLAST$FASTQSUFFIX1'.blast' $FASTQDIR'../species_stats/'
+mv $SAMPLETOBLAST$FASTQSUFFIX1'.tst.fa' $FASTQDIR'../species_stats/'
 fi
 
 done
