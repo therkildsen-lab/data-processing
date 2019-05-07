@@ -22,7 +22,7 @@ DATATYPE=`grep -P "${SAMPLEPREFIX}\t" $SAMPLETABLE | cut -f 6`
 
 if [ $DATATYPE != se ]; then
 ## Calculate average fragment length for paired end reads
-AVGFRAG=`samtools view $DEDUPFILE | awk '{sum+=sqrt($9^2)} END {printf "%f", sum/NR}'`
+AVGFRAG=`samtools view $DEDUPFILE | grep YT:Z:CP | awk '{sum+=sqrt($9^2)} END {printf "%f", sum/NR}'`
 ## Count overlap clipped bam files for paired end reads 
 CLIPOVERLAPFILE=$BASEDIR'bam/'$SAMPLEPREFIX'_bt2_'$REFNAME'_minq20_sorted_dedup_overlapclipped.bam'
 CLIPOVERLAPBASES=`samtools stats $CLIPOVERLAPFILE | grep ^SN | cut -f 2- | grep "^bases mapped (cigar)" | cut -f 2`
