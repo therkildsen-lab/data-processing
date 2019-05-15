@@ -5,6 +5,6 @@
 BAMLIST=$1 # Path to a list of merged bam files. Full paths should be included. An example of such a bam list is /workdir/cod/greenland-cod/sample_lists/bam_list_merged.tsv
 
 for SAMPLEBAM in `cat $BAMLIST`; do
-## Count per position depth per sample
-samtools depth -aa $SAMPLEBAM | cut -f 3 > $SAMPLEBAM'.depth'
+	## Count per position depth per sample
+	samtools depth -aa $SAMPLEBAM | cut -f 3 > $SAMPLEBAM'.depth'
 done

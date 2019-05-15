@@ -14,34 +14,34 @@ ECUT=$7 # E-value cut off, e.g. "1e-20"
 
 # Loop over each sample
 for SAMPLEFILE in `cat $SAMPLELIST`; do
-
-# Extract relevant values from a table of sample and sequencing ID (here in columns 3 and 4, respectively) for each sequenced library
-SAMPLE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 4`
-SEQ_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 3`
-LANE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
-SAMPLE_SEQ_ID=$SAMPLE_ID'_'$SEQ_ID'_'$LANE_ID  # When a sample has been sequenced in multiple lanes, we need to be able to identify the files from each run uniquely
-
-SAMPLETOBLAST=$FASTQDIR$SAMPLE_SEQ_ID  # The input path and file base name
-
-## Extract data type from the sample table
-DATATYPE=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 6`
-
-## Run fastq_species_detector.sh
-if [ $DATATYPE = pe ]; then
-bash /workdir/data-processing/scripts/fastq_species_detector.sh  $SAMPLETOBLAST$FASTQSUFFIX1  /workdir/my_db $SAMPREADS $ECUT
-bash /workdir/data-processing/scripts/fastq_species_detector.sh  $SAMPLETOBLAST$FASTQSUFFIX2  /workdir/my_db $SAMPREADS $ECUT
-mv $SAMPLETOBLAST$FASTQSUFFIX1'.species_stats' $FASTQDIR'../species_stats/'
-mv $SAMPLETOBLAST$FASTQSUFFIX1'.blast' $FASTQDIR'../species_stats/'
-mv $SAMPLETOBLAST$FASTQSUFFIX1'.tst.fa' $FASTQDIR'../species_stats/'
-mv $SAMPLETOBLAST$FASTQSUFFIX2'.species_stats' $FASTQDIR'../species_stats/'
-mv $SAMPLETOBLAST$FASTQSUFFIX2'.blast' $FASTQDIR'../species_stats/'
-mv $SAMPLETOBLAST$FASTQSUFFIX2'.tst.fa' $FASTQDIR'../species_stats/'
-
-else [ $DATATYPE = se ]
-bash /workdir/data-processing/scripts/fastq_species_detector.sh  $SAMPLETOBLAST$FASTQSUFFIX1  /workdir/my_db $SAMPREADS $ECUT
-mv $SAMPLETOBLAST$FASTQSUFFIX1'.species_stats' $FASTQDIR'../species_stats/'
-mv $SAMPLETOBLAST$FASTQSUFFIX1'.blast' $FASTQDIR'../species_stats/'
-mv $SAMPLETOBLAST$FASTQSUFFIX1'.tst.fa' $FASTQDIR'../species_stats/'
-fi
-
+	
+	# Extract relevant values from a table of sample and sequencing ID (here in columns 3 and 4, respectively) for each sequenced library
+	SAMPLE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 4`
+	SEQ_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 3`
+	LANE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
+	SAMPLE_SEQ_ID=$SAMPLE_ID'_'$SEQ_ID'_'$LANE_ID  # When a sample has been sequenced in multiple lanes, we need to be able to identify the files from each run uniquely
+	
+	SAMPLETOBLAST=$FASTQDIR$SAMPLE_SEQ_ID  # The input path and file base name
+	
+	## Extract data type from the sample table
+	DATATYPE=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 6`
+	
+	## Run fastq_species_detector.sh
+	if [ $DATATYPE = pe ]; then
+		bash /workdir/data-processing/scripts/fastq_species_detector.sh  $SAMPLETOBLAST$FASTQSUFFIX1  /workdir/my_db $SAMPREADS $ECUT
+		bash /workdir/data-processing/scripts/fastq_species_detector.sh  $SAMPLETOBLAST$FASTQSUFFIX2  /workdir/my_db $SAMPREADS $ECUT
+		mv $SAMPLETOBLAST$FASTQSUFFIX1'.species_stats' $FASTQDIR'../species_stats/'
+		mv $SAMPLETOBLAST$FASTQSUFFIX1'.blast' $FASTQDIR'../species_stats/'
+		mv $SAMPLETOBLAST$FASTQSUFFIX1'.tst.fa' $FASTQDIR'../species_stats/'
+		mv $SAMPLETOBLAST$FASTQSUFFIX2'.species_stats' $FASTQDIR'../species_stats/'
+		mv $SAMPLETOBLAST$FASTQSUFFIX2'.blast' $FASTQDIR'../species_stats/'
+		mv $SAMPLETOBLAST$FASTQSUFFIX2'.tst.fa' $FASTQDIR'../species_stats/'
+	
+	elif [ $DATATYPE = se ]; then
+		bash /workdir/data-processing/scripts/fastq_species_detector.sh  $SAMPLETOBLAST$FASTQSUFFIX1  /workdir/my_db $SAMPREADS $ECUT
+		mv $SAMPLETOBLAST$FASTQSUFFIX1'.species_stats' $FASTQDIR'../species_stats/'
+		mv $SAMPLETOBLAST$FASTQSUFFIX1'.blast' $FASTQDIR'../species_stats/'
+		mv $SAMPLETOBLAST$FASTQSUFFIX1'.tst.fa' $FASTQDIR'../species_stats/'
+	fi
+	
 done

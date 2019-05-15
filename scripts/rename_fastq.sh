@@ -11,27 +11,27 @@ PE=$4 # Whether the data is pair end or single end. true or false.
 # Loop over each sample
 for SAMPLEFILE in `cat $SAMPLELIST`; do
 
-# Extract relevant values from a table of sample, sequencing, and lane ID (here in columns 4, 3, 2, respectively) for each sequenced library
-SAMPLE_ID=`grep $SAMPLEFILE $SAMPLETABLE | cut -f 4`
-SEQ_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 3`
-LANE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
-
-OLD_SAMPLE_SEQ_ID=$SAMPLE_ID'_'$SEQ_ID
-SAMPLE_SEQ_ID=$SAMPLE_ID'_'$SEQ_ID'_'$LANE_ID  # When a sample has been sequenced in multiple lanes, we need to be able to identify the files from each run uniquely
-
-OLD_SAMPLEADAPT=$BASEDIR'AdapterClipped/'$OLD_SAMPLE_SEQ_ID
-SAMPLEADAPT=$BASEDIR'AdapterClipped/'$SAMPLE_SEQ_ID  # The output path and file prefix
-
-echo $SAMPLEADAPT
-
-#### RENAME ####
-if $PE; then
-mv $OLD_SAMPLEADAPT'_AdapterClipped_F_paired.fastq' $SAMPLEADAPT'_AdapterClipped_F_paired.fastq'
-mv $OLD_SAMPLEADAPT'_AdapterClipped_R_paired.fastq' $SAMPLEADAPT'_AdapterClipped_R_paired.fastq'
-mv $OLD_SAMPLEADAPT'_AdapterClipped_F_unpaired.fastq' $SAMPLEADAPT'_AdapterClipped_F_unpaired.fastq'
-mv $OLD_SAMPLEADAPT'_AdapterClipped_R_unpaired.fastq' $SAMPLEADAPT'_AdapterClipped_R_unpaired.fastq'
-else
-mv $OLD_SAMPLEADAPT'_AdapterClipped_SE.fastq' $SAMPLEADAPT'_AdapterClipped_SE.fastq'
+	# Extract relevant values from a table of sample, sequencing, and lane ID (here in columns 4, 3, 2, respectively) for each sequenced library
+	SAMPLE_ID=`grep $SAMPLEFILE $SAMPLETABLE | cut -f 4`
+	SEQ_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 3`
+	LANE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
+	
+	OLD_SAMPLE_SEQ_ID=$SAMPLE_ID'_'$SEQ_ID
+	SAMPLE_SEQ_ID=$SAMPLE_ID'_'$SEQ_ID'_'$LANE_ID  # When a sample has been sequenced in multiple lanes, we need to be able to identify the files from each run uniquely
+	
+	OLD_SAMPLEADAPT=$BASEDIR'AdapterClipped/'$OLD_SAMPLE_SEQ_ID
+	SAMPLEADAPT=$BASEDIR'AdapterClipped/'$SAMPLE_SEQ_ID  # The output path and file prefix
+	
+	echo $SAMPLEADAPT
+	
+	#### RENAME ####
+	if $PE; then
+		mv $OLD_SAMPLEADAPT'_AdapterClipped_F_paired.fastq' $SAMPLEADAPT'_AdapterClipped_F_paired.fastq'
+		mv $OLD_SAMPLEADAPT'_AdapterClipped_R_paired.fastq' $SAMPLEADAPT'_AdapterClipped_R_paired.fastq'
+		mv $OLD_SAMPLEADAPT'_AdapterClipped_F_unpaired.fastq' $SAMPLEADAPT'_AdapterClipped_F_unpaired.fastq'
+		mv $OLD_SAMPLEADAPT'_AdapterClipped_R_unpaired.fastq' $SAMPLEADAPT'_AdapterClipped_R_unpaired.fastq'
+	else
+		mv $OLD_SAMPLEADAPT'_AdapterClipped_SE.fastq' $SAMPLEADAPT'_AdapterClipped_SE.fastq'
 fi
 
 done

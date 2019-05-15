@@ -9,32 +9,31 @@ REFNAME=$4 # Reference name to add to output files, e.g. gadMor2
 printf 'sample_id\tdedup_mapped_bases\tavg_fragment_size\toverlap_clipped_bases\n'
 
 for SAMPLEBAM in `cat $BAMLIST`; do
-
-## Extract the file name prefix for this sample
-SAMPLEPREFIX=`echo $SAMPLEBAM | sed 's/_bt2_.*//' | sed -e 's#.*/bam/\(\)#\1#'`
-
-## Count deduplicated bases
-DEDUPFILE=$BASEDIR'bam/'$SAMPLEPREFIX'_bt2_'$REFNAME'_minq20_sorted_dedup.bam'
-DEDUPMAPPEDBASES=`samtools stats $DEDUPFILE | grep ^SN | cut -f 2- | grep "^bases mapped (cigar)" | cut -f 2`
-
-## Extract data type from the merged sample table
-DATATYPE=`grep -P "${SAMPLEPREFIX}\t" $SAMPLETABLE | cut -f 6`
-
-if [ $DATATYPE != se ]; then
-
-## Calculate average fragment length for paired end reads
-AVGFRAG=`samtools view $DEDUPFILE | grep YT:Z:CP | awk '{sum+=sqrt($9^2)} END {printf "%f", sum/NR}'`
-if [ "$AVGFRAG" == '' ]; then AVGFRAG=0 ; fi
-
-## Count overlap clipped bam files for paired end reads 
-CLIPOVERLAPFILE=$BASEDIR'bam/'$SAMPLEPREFIX'_bt2_'$REFNAME'_minq20_sorted_dedup_overlapclipped.bam'
-CLIPOVERLAPBASES=`samtools stats $CLIPOVERLAPFILE | grep ^SN | cut -f 2- | grep "^bases mapped (cigar)" | cut -f 2`
-
-else
-AVGFRAG=NA
-CLIPOVERLAPBASES=NA
-fi
-
-printf "%s\t%s\t%s\t%s\n" $SAMPLEPREFIX $DEDUPMAPPEDBASES $AVGFRAG $CLIPOVERLAPBASES
-
+	
+	## Extract the file name prefix for this sample
+	SAMPLEPREFIX=`echo $SAMPLEBAM | sed 's/_bt2_.*//' | sed -e 's#.*/bam/\(\)#\1#'`
+	
+	## Count deduplicated bases
+	DEDUPFILE=$BASEDIR'bam/'$SAMPLEPREFIX'_bt2_'$REFNAME'_minq20_sorted_dedup.bam'
+	DEDUPMAPPEDBASES=`samtools stats $DEDUPFILE | grep ^SN | cut -f 2- | grep "^bases mapped (cigar)" | cut -f 2`
+	
+	## Extract data type from the merged sample table
+	DATATYPE=`grep -P "${SAMPLEPREFIX}\t" $SAMPLETABLE | cut -f 6`
+	
+	if [ $DATATYPE != se ]; then
+		## Calculate average fragment length for paired end reads
+		AVGFRAG=`samtools view $DEDUPFILE | grep YT:Z:CP | awk '{sum+=sqrt($9^2)} END {printf "%f", sum/NR}'`
+		if [ "$AVGFRAG" == '' ]; then AVGFRAG=0 ; fi
+	
+		## Count overlap clipped bam files for paired end reads 
+		CLIPOVERLAPFILE=$BASEDIR'bam/'$SAMPLEPREFIX'_bt2_'$REFNAME'_minq20_sorted_dedup_overlapclipped.bam'
+		CLIPOVERLAPBASES=`samtools stats $CLIPOVERLAPFILE | grep ^SN | cut -f 2- | grep "^bases mapped (cigar)" | cut -f 2`
+	
+	else
+		AVGFRAG=NA
+		CLIPOVERLAPBASES=NA
+	fi
+	
+	printf "%s\t%s\t%s\t%s\n" $SAMPLEPREFIX $DEDUPMAPPEDBASES $AVGFRAG $CLIPOVERLAPBASES
+	
 done

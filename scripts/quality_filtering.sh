@@ -8,37 +8,36 @@ FILTER=$4 # Type of filtering. Values can be: polyg (forced PolyG trimming only)
 
 ## Loop over each sample
 for SAMPLEFILE in `cat $SAMPLELIST`; do
-
-## Extract relevant values from a table of sample, sequencing, and lane ID (here in columns 4, 3, 2, respectively) for each sequenced library
-SAMPLE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 4`
-SEQ_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 3`
-LANE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
-SAMPLE_SEQ_ID=$SAMPLE_ID'_'$SEQ_ID'_'$LANE_ID
-
-## Extract data type from the sample table
-DATATYPE=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 6`
-
-## The input and output path and file prefix
-SAMPLEADAPT=$BASEDIR'adapter_clipped/'$SAMPLE_SEQ_ID
-SAMPLEQUAL=$BASEDIR'qual_filtered/'$SAMPLE_SEQ_ID
-
-## Trim polyg tail or low quality tail with fastp.
-# --trim_poly_g forces polyg trimming, -r enables cut_right quality trimming
-# -Q disables quality filter, -L disables length filter, -A disables adapter trimming
-# Go to https://github.com/OpenGene/fastp for more information
-if [ $DATATYPE = pe ]
-then
-	if [ $FILTER = polyg ]; then
-		/workdir/programs/fastp --trim_poly_g -Q -L -A -i $SAMPLEADAPT'_adapter_clipped_f_paired.fastq.gz' -I $SAMPLEADAPT'_adapter_clipped_r_paired.fastq.gz' -o $SAMPLEQUAL'_adapter_clipped_qual_filtered_f_paired.fastq.gz' -O $SAMPLEQUAL'_adapter_clipped_qual_filtered_r_paired.fastq.gz'
-	else [ $FILTER = quality ]	
-		/workdir/programs/fastp --cut_right --cut_window_size 10 --cut_mean_quality 15 -L -Q -A -i $SAMPLEADAPT'_adapter_clipped_f_paired.fastq.gz' -I $SAMPLEADAPT'_adapter_clipped_r_paired.fastq.gz' -o $SAMPLEQUAL'_adapter_clipped_qual_filtered_f_paired.fastq.gz' -O $SAMPLEQUAL'_adapter_clipped_qual_filtered_r_paired.fastq.gz'
+	
+	## Extract relevant values from a table of sample, sequencing, and lane ID (here in columns 4, 3, 2, respectively) for each sequenced library
+	SAMPLE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 4`
+	SEQ_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 3`
+	LANE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
+	SAMPLE_SEQ_ID=$SAMPLE_ID'_'$SEQ_ID'_'$LANE_ID
+	
+	## Extract data type from the sample table
+	DATATYPE=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 6`
+	
+	## The input and output path and file prefix
+	SAMPLEADAPT=$BASEDIR'adapter_clipped/'$SAMPLE_SEQ_ID
+	SAMPLEQUAL=$BASEDIR'qual_filtered/'$SAMPLE_SEQ_ID
+	
+	## Trim polyg tail or low quality tail with fastp.
+	# --trim_poly_g forces polyg trimming, -r enables cut_right quality trimming
+	# -Q disables quality filter, -L disables length filter, -A disables adapter trimming
+	# Go to https://github.com/OpenGene/fastp for more information
+	if [ $DATATYPE = pe ]; then
+		if [ $FILTER = polyg ]; then
+			/workdir/programs/fastp --trim_poly_g -Q -L -A -i $SAMPLEADAPT'_adapter_clipped_f_paired.fastq.gz' -I $SAMPLEADAPT'_adapter_clipped_r_paired.fastq.gz' -o $SAMPLEQUAL'_adapter_clipped_qual_filtered_f_paired.fastq.gz' -O $SAMPLEQUAL'_adapter_clipped_qual_filtered_r_paired.fastq.gz'
+		elif [ $FILTER = quality ]; then
+			/workdir/programs/fastp --cut_right --cut_window_size 10 --cut_mean_quality 15 -L -Q -A -i $SAMPLEADAPT'_adapter_clipped_f_paired.fastq.gz' -I $SAMPLEADAPT'_adapter_clipped_r_paired.fastq.gz' -o $SAMPLEQUAL'_adapter_clipped_qual_filtered_f_paired.fastq.gz' -O $SAMPLEQUAL'_adapter_clipped_qual_filtered_r_paired.fastq.gz'
+		fi
+	elif [ $DATATYPE = se ]; then
+		if [ $FILTER = polyg ]; then
+			/workdir/programs/fastp --trim_poly_g -Q -L -A -i $SAMPLEADAPT'_adapter_clipped_se.fastq.gz' -o $SAMPLEQUAL'_adapter_clipped_qual_filtered_se.fastq.gz' 
+		elif [ $FILTER = quality ]; then
+			/workdir/programs/fastp --cut_right --cut_window_size 10 --cut_mean_quality 15 -L -A -i $SAMPLEADAPT'_adapter_clipped_se.fastq.gz' -o $SAMPLEQUAL'_adapter_clipped_qual_filtered_se.fastq.gz' 
+		fi
 	fi
-else [ $DATATYPE = se ]
-	if [ $FILTER = polyg ]; then
-		/workdir/programs/fastp --trim_poly_g -Q -L -A -i $SAMPLEADAPT'_adapter_clipped_se.fastq.gz' -o $SAMPLEQUAL'_adapter_clipped_qual_filtered_se.fastq.gz' 
-	else [ $FILTER = quality ]
-		/workdir/programs/fastp --cut_right --cut_window_size 10 --cut_mean_quality 15 -L -A -i $SAMPLEADAPT'_adapter_clipped_se.fastq.gz' -o $SAMPLEQUAL'_adapter_clipped_qual_filtered_se.fastq.gz' 
-	fi
-fi
-
+	
 done

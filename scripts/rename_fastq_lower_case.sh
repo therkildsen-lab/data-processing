@@ -8,30 +8,30 @@ DATATYPE=$4 # Data type. pe for paired end data and se for single end data.
 
 # Loop over each sample
 for SAMPLEFILE in `cat $SAMPLELIST`; do
-
-## Extract relevant values from a table of sample, sequencing, and lane ID (here in columns 4, 3, 2, respectively) for each sequenced library
-SAMPLE_ID=`grep $SAMPLEFILE $SAMPLETABLE | cut -f 4`
-SEQ_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 3`
-LANE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
-SAMPLE_SEQ_ID=$SAMPLE_ID'_'$SEQ_ID'_'$LANE_ID  
-
-## The output path and file prefix
-SAMPLEADAPT=$BASEDIR'adapter_clipped/'$SAMPLE_SEQ_ID  
-SAMPLEQUAL=$BASEDIR'qual_filtered/'$SAMPLE_SEQ_ID 
-echo $SAMPLEADAPT
-echo $SAMPLEQUAL
-
-## Rename
-if [ $DATATYPE = pe ]; then
-mv $SAMPLEADAPT'_AdapterClipped_F_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_f_paired.fastq.gz'
-mv $SAMPLEADAPT'_AdapterClipped_R_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_paired.fastq.gz'
-mv $SAMPLEADAPT'_AdapterClipped_F_unpaired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_f_unpaired.fastq.gz'
-mv $SAMPLEADAPT'_AdapterClipped_R_unpaired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_unpaired.fastq.gz'
-mv $SAMPLEQUAL'_AdapterClipped_QualFiltered_F_paired.fastq.gz' $SAMPLEQUAL'_adapter_clipped_qual_filtered_f_paired.fastq.gz'
-mv $SAMPLEQUAL'_AdapterClipped_QualFiltered_R_paired.fastq.gz' $SAMPLEQUAL'_adapter_clipped_qual_filtered_r_paired.fastq.gz'
-
-else [ $DATATYPE = se ]
-mv $SAMPLEADAPT'_AdapterClipped_SE.fastq.gz' $SAMPLEADAPT'_adapter_clipped_se.fastq.gz'
-fi
-
+	
+	## Extract relevant values from a table of sample, sequencing, and lane ID (here in columns 4, 3, 2, respectively) for each sequenced library
+	SAMPLE_ID=`grep $SAMPLEFILE $SAMPLETABLE | cut -f 4`
+	SEQ_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 3`
+	LANE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
+	SAMPLE_SEQ_ID=$SAMPLE_ID'_'$SEQ_ID'_'$LANE_ID  
+	
+	## The output path and file prefix
+	SAMPLEADAPT=$BASEDIR'adapter_clipped/'$SAMPLE_SEQ_ID  
+	SAMPLEQUAL=$BASEDIR'qual_filtered/'$SAMPLE_SEQ_ID 
+	echo $SAMPLEADAPT
+	echo $SAMPLEQUAL
+	
+	## Rename
+	if [ $DATATYPE = pe ]; then
+		mv $SAMPLEADAPT'_AdapterClipped_F_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_f_paired.fastq.gz'
+		mv $SAMPLEADAPT'_AdapterClipped_R_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_paired.fastq.gz'
+		mv $SAMPLEADAPT'_AdapterClipped_F_unpaired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_f_unpaired.fastq.gz'
+		mv $SAMPLEADAPT'_AdapterClipped_R_unpaired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_unpaired.fastq.gz'
+		mv $SAMPLEQUAL'_AdapterClipped_QualFiltered_F_paired.fastq.gz' $SAMPLEQUAL'_adapter_clipped_qual_filtered_f_paired.fastq.gz'
+		mv $SAMPLEQUAL'_AdapterClipped_QualFiltered_R_paired.fastq.gz' $SAMPLEQUAL'_adapter_clipped_qual_filtered_r_paired.fastq.gz'
+	
+	elif [ $DATATYPE = se ]; then
+	mv $SAMPLEADAPT'_AdapterClipped_SE.fastq.gz' $SAMPLEADAPT'_adapter_clipped_se.fastq.gz'
+	fi
+	
 done
