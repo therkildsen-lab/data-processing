@@ -24,7 +24,7 @@ The following subdirectories are optional, depending on your workflow:
 
   * `angsd` angsd output files
   
-  * `fastq` raw fastq files
+  * `fastq` raw fastq files (if you don't already have it backed up on the backup folder)
   
   * `species_stats` fastq species detector output
   
