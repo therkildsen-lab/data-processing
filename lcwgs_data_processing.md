@@ -1,4 +1,4 @@
-# data-processing
+# Data-processing for low coverage whole genome sequencing 
 
 Scripts for going from raw .fastq files to processed and quality-checked .bam files for downstream analysis
 
