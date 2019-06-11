@@ -1,4 +1,4 @@
-# Data-processing for low coverage whole genome sequencing 
+# Data processing for low coverage whole genome sequencing 
 
 Scripts for going from raw .fastq files to processed and quality-checked .bam files for downstream analysis
 
@@ -54,7 +54,7 @@ A sample table is a **tab deliminated** table that includes relevant information
   
   * `lane_number` lane number; each sequencing lane should be assigned a different number
   
-  * `seq_id` sequence ID
+  * `seq_id` sequence ID，this can be the same thing as sample ID or lane ID and it does not matter except for when different libraries were prepared out of the same sample and were run in the same lane. In this case, seq_id should be used to distinguish these.
   
   * `sample_id` sample ID
   
@@ -72,8 +72,15 @@ An example of how a sample table can be created from a list of fastq file names 
 
 #### Install programs used
 
-If you are not working on the Therkildsen server, you might need to intall the following programs to your machine.
-
+If you are not working on the Therkildsen server, you might need to intall the following programs to your machine. Then you will also need to change the paths to these programs in the relavant scripts. 
+ 
+ * `Trimmomatic` http://www.usadellab.org/cms/?page=trimmomatic
+ * `fastp` https://github.com/OpenGene/fastp 
+ * `bowtie2` http://bowtie-bio.sourceforge.net/bowtie2/index.shtml
+ * `Picard` https://broadinstitute.github.io/picard/
+ * `bamUtil` https://github.com/statgen/bamUtil
+ * `GenomeAnalysisTK-3.7` https://software.broadinstitute.org/gatk/documentation/version-history.php?id=8692&page=3
+ 
 ## Get started
 
 An example of the workflow: https://github.com/therkildsen-lab/greenland-cod/blob/master/markdowns/data_processing.md
