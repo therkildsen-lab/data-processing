@@ -83,7 +83,35 @@ If you are not working on the Therkildsen server, you might need to intall the f
  
 ## Get started
 
-An example of the workflow: https://github.com/therkildsen-lab/greenland-cod/blob/master/markdowns/data_processing.md
+1. Clip adapters using [adapter_clipping.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/adapter_clipping.sh)
+
+2. Quality filtering using [quality_filtering.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/quality_filtering.sh) (optional)
+
+3. Build bowtie reference index using [build_bowtie_ref_index.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/build_bowtie_ref_index.sh). This only needs to be done once with the same reference genome.
+
+4. Map to reference, sort, and quality filter using [low_coverage_mapping.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/low_coverage_mapping.sh)
+
+5. Merge duplicated samples using a customizable script. See an example [here](https://github.com/therkildsen-lab/greenland-cod/blob/master/markdowns/data_processing.md)
+
+6. Deduplicate and clip overlapping read pairs using [deduplicate_clipoverlap.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/deduplicate_clipoverlap.sh)
+
+7. In-del relignment using [realign_indels.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/realign_indels.sh)
+
+## Optional steps
+
+1. Check contamination or species composition in fastq files using [run_species_detector.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/run_species_detector.sh)
+
+2. Count fastq files using [count_fastq.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/count_fastq.sh)
+
+3. Count bam files before merging using [count_bam_unmerged.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/count_bam_unmerged.sh)
+
+4. Count bam files after merging using [count_bam_unmerged.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/count_bam_merged.sh)
+
+5. Count per position depth using [count_depth_per_position_per_sample.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/count_depth_per_position_per_sample.sh) and summarize these using [summarize_depth_per_position.R](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/summarize_depth_per_position.R)
+
+## Examples of the workflow
+
+ * [Greenland cod project](https://github.com/therkildsen-lab/greenland-cod/blob/master/markdowns/data_processing.md)
 
 ## A few suggestions
 
