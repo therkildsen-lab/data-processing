@@ -19,6 +19,8 @@ As a first step, you should create a project directory (referred to as `BASEDIR`
   * `nohups` nohup log files
   
   * `sample_lists` sample tables and sample lists
+   
+  * `markdowns` markdown files tracking the workflow; it is recommended that you first create Rmd files using Rstudio, and knit these into GitHub markdown format
 
 The following subdirectories are optional, depending on your workflow:
 
@@ -31,9 +33,7 @@ The following subdirectories are optional, depending on your workflow:
   * `fastqc` FastQC output
   
   * `qual_filtered` quality filtered and/or polyG trimming
-  
-  * `markdowns` markdown files tracking the workflow, and some Rmd files on data exploration
-  
+    
   * `scripts` scripts specific to your projects (e.g. merging certain bam files)
 
 It is recommended that you make this project directory a separate GitHub repository. This way, you can track all the changes in your project directory. To make GitHub ignore certain directories (e.g. `adapter_clipped` and `bam`, since these will contain many large files), create a `.gitignore` file in your project directory, in which you specify the paths that should be ignored by git. 
