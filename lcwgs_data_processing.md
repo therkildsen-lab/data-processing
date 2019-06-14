@@ -105,7 +105,7 @@ If you are not working on the Therkildsen server, you might need to intall the f
 
 3. Count bam files before merging using [count_bam_unmerged.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/count_bam_unmerged.sh)
 
-4. Count bam files after merging using [count_bam_unmerged.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/count_bam_merged.sh)
+4. Count bam files after merging using [count_bam_merged.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/count_bam_merged.sh)
 
 5. Count per position depth using [count_depth_per_position_per_sample.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/count_depth_per_position_per_sample.sh) and summarize these using [summarize_depth_per_position.R](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/summarize_depth_per_position.R)
 
