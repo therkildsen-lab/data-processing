@@ -91,9 +91,9 @@ If you are not working on the Therkildsen server, you might need to intall the f
 
 4. Map to reference, sort, and quality filter using [low_coverage_mapping.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/low_coverage_mapping.sh)
 
-5. Merge duplicated samples using a customizable script. See an example [here](https://github.com/therkildsen-lab/greenland-cod/blob/master/markdowns/data_processing.md)
+5. Merge duplicated samples. You should write your own script to do this, but see an example [here](https://github.com/therkildsen-lab/greenland-cod/blob/master/markdowns/data_processing.md)
 
-6. Deduplicate and clip overlapping read pairs using [deduplicate_clipoverlap.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/deduplicate_clipoverlap.sh)
+6. Deduplicate (all samples) and clip overlapping read pairs (pair-end only) using [deduplicate_clipoverlap.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/deduplicate_clipoverlap.sh)
 
 7. In-del relignment using [realign_indels.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/realign_indels.sh)
 
