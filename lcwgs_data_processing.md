@@ -80,7 +80,27 @@ If you are not working on the Therkildsen server, you might need to intall the f
  * `Picard` https://broadinstitute.github.io/picard/
  * `bamUtil` https://github.com/statgen/bamUtil
  * `GenomeAnalysisTK-3.7` https://software.broadinstitute.org/gatk/documentation/version-history.php?id=8692&page=3
- 
+ * `BBMap` https://github.com/BioInfoTools/BBMap
+
+## Demultiplex
+
+If your fastq file has not been demultiplex and if the barcodes are part of the fastq headers, use the following line to demultiplex. Replace the items in quotes with appropriate paths and names. An example of this being used can be found [here](https://github.com/therkildsen-lab/sucker/blob/master/markdowns/data_processing.md). An example of the barcode list can be found [here](https://github.com/therkildsen-lab/sucker/blob/master/sample_lists/barcode_list_lane_1.txt).
+
+See [demuxbyname.sh](https://github.com/BioInfoTools/BBMap/blob/master/sh/demuxbyname.sh) for details. 
+
+``` bash
+nohup bash /programs/bbmap-38.45/demuxbyname.sh \
+in="Path to gzipped fastq files" \
+in2="Path to gzipped fastq files if your have pair-end reads" \
+out="Suffix of output names; this should start with a percentage sign (%)" \
+out2="Suffix of output names if your have pair-end reads; this should start with a percentage sign (%)" \
+outu=unknown_barcode_1.fastq.gz \
+outu2=unknown_barcode_2.fastq.gz \
+prefixmode=f \
+names="Path to a list of barcode sequences" \
+> "Path to the nohup file" &
+```
+
 ## Get started
 
 1. Clip adapters using [adapter_clipping.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/adapter_clipping.sh)
