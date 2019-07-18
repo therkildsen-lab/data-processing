@@ -136,3 +136,5 @@ names="Path to a list of barcode sequences" \
 ## A few suggestions
 
 1. Avoid using Excel to edit your sample tables and lists unless you know what you are doing, since it may lead to weird line ending issues. If you are encoutering such issues, read the file using R and write it again using functions such as `write_tsv()`
+
+2. It is a good practice to have completely unique sample IDs. For example, having one sample named `1Cod` and another sample named `11Cod` can create unexpected problems. It would be much safer to name them `01Cod` and `11Cod`. 
