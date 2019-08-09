@@ -115,7 +115,7 @@ names="Path to a list of barcode sequences" \
 
 6. Deduplicate (all samples) and clip overlapping read pairs (pair-end only) using [deduplicate_clipoverlap.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/deduplicate_clipoverlap.sh)
 
-7. In-del relignment using [realign_indels.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/realign_indels.sh)
+7. In-del relignment using [realign_indels.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/realign_indels.sh). This needs to be run in the `/bam/` folder so that the realigned bam files can be outputted to the correct directory. 
 
 ## Optional steps
 
