@@ -22,7 +22,7 @@ done
 # This is done across all samples at once
 
 ## Create list of potential in-dels
-if [ ! -f BASEDIR'bam/all_samples_for_indel_realigner.intervals' ]; then
+if [ ! -f $BASEDIR'bam/all_samples_for_indel_realigner.intervals' ]; then
 	java -Xmx40g -jar /programs/GenomeAnalysisTK-3.7/GenomeAnalysisTK.jar \
 	   -T RealignerTargetCreator \
 	   -R $REFERENCE \
