@@ -9,6 +9,7 @@ BASEDIR <- args[3] # Path to the base directory where adapter clipped fastq file
 library(tidyverse)
 library(data.table)
 bam_list <- read_tsv(BAMLIST, col_names = F)$X1
+bam_list_prefix <- str_extract(BAMLIST, "[^.]+")
 sample_table <- read_tsv(SAMPLETABLE)
 for (i in 1:length(bam_list)){
   print(i)
@@ -32,9 +33,9 @@ write_lines(total_depth, paste0(BASEDIR, "sample_lists/depth_per_position_all_sa
 write_lines(total_presence, paste0(BASEDIR, "sample_lists/presence_per_position_all_samples.depth"))
 
 # Total Depth per Site across All Individuals (on server)
-total_depth <- fread(paste0(BASEDIR, "sample_lists/depth_per_position_all_samples.depth"))
-total_presence <- fread(paste0(BASEDIR, "sample_lists/presence_per_position_all_samples.depth"))
+total_depth <- fread(paste0(bam_list_prefix, "_depth_per_position_all_samples.depth"))
+total_presence <- fread(paste0(bam_list_prefix, "_presence_per_position_all_samples.depth"))
 total_depth_summary <- count(total_depth, by=V1)
 total_presence_summary <- count(total_presence, by=V1)
-write_tsv(total_depth_summary, paste0(BASEDIR, "sample_lists/depth_per_position_all_samples_histogram.tsv"))
-write_tsv(total_presence_summary, paste0(BASEDIR, "sample_lists/presence_per_position_all_samples_histogram.tsv"))
+write_tsv(total_depth_summary, paste0(bam_list_prefix, "_depth_per_position_all_samples_histogram.tsv"))
+write_tsv(total_presence_summary, paste0(bam_list_prefix, "_presence_per_position_all_samples_histogram.tsv"))
