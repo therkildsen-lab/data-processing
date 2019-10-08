@@ -28,13 +28,13 @@ for (i in 1:length(bam_list)){
     total_presence <- total_presence + presence
   }
 }
-write_tsv(output, paste0(BASEDIR, "sample_lists/depth_per_position_per_sample_summary.tsv"))
-write_lines(total_depth, paste0(BASEDIR, "sample_lists/depth_per_position_all_samples.depth"))
-write_lines(total_presence, paste0(BASEDIR, "sample_lists/presence_per_position_all_samples.depth"))
+write_tsv(output, paste0(bam_list_prefix, "_depth_per_position_per_sample_summary.tsv"))
+write_lines(total_depth, paste0(bam_list_prefix, "_depth_per_position_all_samples.txt"))
+write_lines(total_presence, paste0(bam_list_prefix, "_presence_per_position_all_samples.txt"))
 
 # Total Depth per Site across All Individuals (on server)
-total_depth <- fread(paste0(bam_list_prefix, "_depth_per_position_all_samples.depth"))
-total_presence <- fread(paste0(bam_list_prefix, "_presence_per_position_all_samples.depth"))
+total_depth <- fread(paste0(bam_list_prefix, "_depth_per_position_all_samples.txt"))
+total_presence <- fread(paste0(bam_list_prefix, "_presence_per_position_all_samples.txt"))
 total_depth_summary <- count(total_depth, by=V1)
 total_presence_summary <- count(total_presence, by=V1)
 write_tsv(total_depth_summary, paste0(bam_list_prefix, "_depth_per_position_all_samples_histogram.tsv"))
