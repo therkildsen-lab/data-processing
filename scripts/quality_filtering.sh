@@ -33,7 +33,7 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
 		elif [ $FILTER = quality ]; then
 			/workdir/programs/fastp --cut_right --cut_window_size 10 --cut_mean_quality 15 -L -Q -A -i $SAMPLEADAPT'_adapter_clipped_f_paired.fastq.gz' -I $SAMPLEADAPT'_adapter_clipped_r_paired.fastq.gz' -o $SAMPLEQUAL'_adapter_clipped_qual_filtered_f_paired.fastq.gz' -O $SAMPLEQUAL'_adapter_clipped_qual_filtered_r_paired.fastq.gz'
 		elif [ $FILTER = length ]; then
-			/workdir/programs/fastp --max_len1 MAXLENGTH -Q -L -A -i $SAMPLEADAPT'_adapter_clipped_f_paired.fastq.gz' -I $SAMPLEADAPT'_adapter_clipped_r_paired.fastq.gz' -o $SAMPLEQUAL'_adapter_clipped_qual_filtered_f_paired.fastq.gz' -O $SAMPLEQUAL'_adapter_clipped_qual_filtered_r_paired.fastq.gz'
+			/workdir/programs/fastp --max_len1 $MAXLENGTH -Q -L -A -i $SAMPLEADAPT'_adapter_clipped_f_paired.fastq.gz' -I $SAMPLEADAPT'_adapter_clipped_r_paired.fastq.gz' -o $SAMPLEQUAL'_adapter_clipped_qual_filtered_f_paired.fastq.gz' -O $SAMPLEQUAL'_adapter_clipped_qual_filtered_r_paired.fastq.gz'
 		fi
 	elif [ $DATATYPE = se ]; then
 		if [ $FILTER = polyg ]; then
@@ -41,7 +41,7 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
 		elif [ $FILTER = quality ]; then
 			/workdir/programs/fastp --cut_right --cut_window_size 10 --cut_mean_quality 15 -L -A -i $SAMPLEADAPT'_adapter_clipped_se.fastq.gz' -o $SAMPLEQUAL'_adapter_clipped_qual_filtered_se.fastq.gz' 
 		elif [ $FILTER = length ]; then
-			/workdir/programs/fastp --max_len1 MAXLENGTH -Q -L -A -i $SAMPLEADAPT'_adapter_clipped_se.fastq.gz' -o $SAMPLEQUAL'_adapter_clipped_qual_filtered_se.fastq.gz' 
+			/workdir/programs/fastp --max_len1 $MAXLENGTH -Q -L -A -i $SAMPLEADAPT'_adapter_clipped_se.fastq.gz' -o $SAMPLEQUAL'_adapter_clipped_qual_filtered_se.fastq.gz' 
 		fi
 	fi
 	
