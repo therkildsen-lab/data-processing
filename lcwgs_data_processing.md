@@ -84,7 +84,9 @@ If you are not working on the Therkildsen server, you might need to intall the f
 
 ## Demultiplex
 
-If your fastq file has not been demultiplex and if the barcodes are part of the fastq headers, use the following line to demultiplex. Replace the items in quotes with appropriate paths and names. An example of this being used can be found [here](https://github.com/therkildsen-lab/sucker/blob/master/markdowns/data_processing.md). An example of the barcode list can be found [here](https://github.com/therkildsen-lab/sucker/blob/master/sample_lists/barcode_list_lane_1.txt).
+If your fastq file has not been demultiplex and if the barcodes are part of the fastq headers, use the following line to demultiplex. Replace the items in quotes with appropriate paths and names. An example of this workflow can be found [here](https://github.com/therkildsen-lab/sucker/blob/master/markdowns/data_processing.md). 
+
+Each line in the barcode list should be in the format of `i7sequence+i5sequence`, and an example of such a barcode list can be found [here](https://github.com/therkildsen-lab/sucker/blob/master/sample_lists/barcode_list_lane_1.txt).
 
 See [demuxbyname.sh](https://github.com/BioInfoTools/BBMap/blob/master/sh/demuxbyname.sh) for details. 
 
@@ -100,6 +102,8 @@ prefixmode=f \
 names="Path to a list of barcode sequences" \
 > "Path to the nohup file" &
 ```
+
+After this is run, make sure to rename your demulitplexed fastq files so that the file names do not contain a plus sign (`+`), which can be a problem in downstream analyses. 
 
 ## Get started
 
