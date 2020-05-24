@@ -21,6 +21,10 @@ done
 ## Realign around in-dels
 # This is done across all samples at once
 
+## Use an older version of Java
+export JAVA_HOME=/usr/local/jdk1.8.0_121
+export PATH=$JAVA_HOME/bin:$PATH
+
 ## Create list of potential in-dels
 if [ ! -f $BASEDIR'bam/all_samples_for_indel_realigner.intervals' ]; then
 	java -Xmx40g -jar /programs/GenomeAnalysisTK-3.7/GenomeAnalysisTK.jar \
