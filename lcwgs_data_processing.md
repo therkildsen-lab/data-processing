@@ -115,7 +115,7 @@ After this is run, make sure to rename your demulitplexed fastq files so that th
 
 4. Map to reference, sort, and quality filter using [low_coverage_mapping.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/low_coverage_mapping.sh)
 
-5. Merge duplicated samples. You should write your own script to do this, but see an example [here](https://github.com/therkildsen-lab/greenland-cod/blob/master/markdowns/data_processing.md)
+5. Merge samples that were sequenced multiple times on different lanes (or within the same lane, with different barcodes). You should write your own script to do this, but see an example [here](https://github.com/therkildsen-lab/greenland-cod/blob/master/markdowns/data_processing.md)
 
 6. Deduplicate (all samples) and clip overlapping read pairs (pair-end only) using [deduplicate_clipoverlap.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/deduplicate_clipoverlap.sh)
 
