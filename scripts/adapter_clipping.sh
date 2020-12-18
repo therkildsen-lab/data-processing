@@ -11,7 +11,6 @@ ADAPTERS=$7 # Path to a list of adapter/index sequences. For Nextera libraries: 
 TRIMMOMATIC=${8:-/programs/trimmomatic/trimmomatic-0.39.jar} ## Path to trimmomatic (default /programs/trimmomatic/trimmomatic-0.39.jar)
 THREADS=${9:-8} # Number of threads for trimmomatic to use (default 8)
 JOBS=${10:-1} # Number of trimmomatic jobs to run in parallel (default 1)
-NICE=${11:-0} # Nicety value (default 0)
 
 JOB_INDEX=0
 ## Loop over each sample
@@ -34,10 +33,10 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
 	# The options for ILLUMINACLIP are: ILLUMINACLIP:<fastaWithAdaptersEtc>:<seed mismatches>:<palindrome clip threshold>:<simple clip threshold>:<minAdapterLength>:<keepBothReads>
 	# For definitions of these options, see http://www.usadellab.org/cms/uploads/supplementary/Trimmomatic/TrimmomaticManual_V0.32.pdf
 	if [ $DATATYPE = pe ]; then
-		nice -n $NICE java -jar $TRIMMOMATIC PE -threads $THREADS -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $RAWFASTQ_ID$RAWFASTQSUFFIX2 $SAMPLEADAPT'_adapter_clipped_f_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_f_unpaired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_unpaired.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10:1:true' &
+		java -jar $TRIMMOMATIC PE -threads $THREADS -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $RAWFASTQ_ID$RAWFASTQSUFFIX2 $SAMPLEADAPT'_adapter_clipped_f_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_f_unpaired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_paired.fastq.gz' $SAMPLEADAPT'_adapter_clipped_r_unpaired.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10:1:true' &
 	
 	elif [ $DATATYPE = se ]; then
-		nice -n $NICE java -jar $TRIMMOMATIC SE -threads $THREADS -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $SAMPLEADAPT'_adapter_clipped_se.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10' &
+		java -jar $TRIMMOMATIC SE -threads $THREADS -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $SAMPLEADAPT'_adapter_clipped_se.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10' &
 	fi
 	
 	JOB_INDEX=$(( JOB_INDEX + 1 ))
