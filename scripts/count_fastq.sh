@@ -6,8 +6,7 @@ SAMPLELIST=$1 # Path to a list of prefixes of the raw fastq files. It should be 
 SAMPLETABLE=$2 # Path to a sample table where the 1st column is the prefix of the raw fastq files. The 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. The 6th column should be data type, which is either pe or se. An example of such a sample table is: /workdir/cod/greenland-cod/sample_lists/sample_table.tsv
 RAWFASTQDIR=$3 # Path to raw fastq files. An example for the Greenland cod data is: /workdir/backup/cod/greenland_cod/fastq/
 BASEDIR=$4 # Path to the base directory where adapter clipped fastq file are stored in a subdirectory titled "adapter_clipped" and into which output files will be written to separate subdirectories. An example for the Greenland cod data is: /workdir/cod/greenland-cod/
-SEQUENCER=$5 # Sequencer name that appears in the beginning of the first line in a fastq file. An example for the sturgeon data is: @HISEQ550
-QUALFILTERED=$6 # Whether the sample has gone through quality filtering. true or false
+QUALFILTERED=$5 # Whether the sample has gone through quality filtering. true or false
 
 # Create headers for the output
 if $QUALFILTERED; then
@@ -36,7 +35,7 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
 	ADAPTERFILES=$BASEDIR'adapter_clipped/'$SAMPLE_SEQ_ID'*.gz'
 	
 	# Count all bases in adapter clipped files. 
-	ADPTERCLIPBASES=`zcat $ADAPTERFILES | grep -A 1 -E "^$SEQUENCER" | grep "^[ACGTN]" | tr -d "\n" | wc -m`
+	ADPTERCLIPBASES=`zcat $ADAPTERFILES | awk 'NR%4==2' | tr -d "\n" | wc -m`
 	
 	# If reads are quality filtered, count quality filtered files.
 	if $QUALFILTERED; then
@@ -45,7 +44,7 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
 		QUALFILES=$BASEDIR'qual_filtered/'$SAMPLE_SEQ_ID'*.gz'
 		
 		# Count bases in quality trimmed files.
-		QUALFILTPBASES=`zcat $QUALFILES | grep -A 1 -E "^$SEQUENCER" | grep "^[ACGTN]" | tr -d "\n" | wc -m`
+		QUALFILTPBASES=`zcat $QUALFILES | awk 'NR%4==2' | tr -d "\n" | wc -m`
 		
 		# Write the counts in appropriate order.
 		printf "%s\t%s\t%s\t%s\t%s\n" $SAMPLE_SEQ_ID $((RAWREADS/4)) $RAWBASES $ADPTERCLIPBASES $QUALFILTPBASES
