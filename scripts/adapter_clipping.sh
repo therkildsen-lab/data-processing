@@ -9,9 +9,11 @@ RAWFASTQSUFFIX1=$5 # Suffix to raw fastq files. Use forward reads with paired-en
 RAWFASTQSUFFIX2=$6 # Suffix to raw fastq files. Use reverse reads with paired-end data. An example for the Greenland paired-end data is: _R2.fastq.gz
 ADAPTERS=$7 # Path to a list of adapter/index sequences. For Nextera libraries: /workdir/cod/reference_seqs/NexteraPE_NT.fa For BEST libraries: /workdir/cod/reference_seqs/BEST.fa
 TRIMMOMATIC=${8:-/programs/trimmomatic/trimmomatic-0.39.jar} ## Path to trimmomatic (default /programs/trimmomatic/trimmomatic-0.39.jar)
-THREADS=${9:-10} # Number of threads for trimmomatic to use (default 10)
+THREADS=${9:-6} # Number of threads for trimmomatic to use (default 6)
+JOBS=${10:-4} # Number of trimmomatic jobs to run in parallel (default 4)
 
 
+JOB_INDEX=0
 ## Loop over each sample
 for SAMPLEFILE in `cat $SAMPLELIST`; do
 	
@@ -38,4 +40,9 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
 		java -jar $TRIMMOMATIC SE -threads $THREADS -phred33 $RAWFASTQ_ID$RAWFASTQSUFFIX1 $SAMPLEADAPT'_adapter_clipped_se.fastq.gz' 'ILLUMINACLIP:'$ADAPTERS':2:30:10'
 	fi
 	
+	JOB_INDEX = $(( JOB_INDEX + 1 ))
+	if [ $JOB_INDEX == $JOBS ]; then
+		wait
+		JOB_INDEX=0
+	fi
 done
