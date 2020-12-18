@@ -23,7 +23,7 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
 	RAWREADS=`zcat $RAWFASTQFILES | wc -l`
 	
 	# Count the number of bases in raw fastq files. We only need to count the forward reads, since the reverse will contain exactly the same number of bases. The total number of reads will be twice this count. 
-	RAWBASES=`zcat $RAWFASTQFILES | grep -A 1 -E "^$SEQUENCER" | grep "^[ACGTN]" | tr -d "\n" | wc -m` 
+	RAWBASES=`zcat $RAWFASTQFILES | awk 'NR%4==2' | tr -d "\n" | wc -m` 
 	
 	# Extract relevant values from a table of sample, sequencing, and lane ID (here in columns 4, 3, 2, respectively) for each sequenced library
 	SAMPLE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 4`
