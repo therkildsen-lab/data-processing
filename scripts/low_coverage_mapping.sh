@@ -10,6 +10,10 @@ FASTQSUFFIX2=$6 # Suffix to fastq files. Use reverse reads with paired-end data.
 MAPPINGPRESET=$7 # The pre-set option to use for mapping in bowtie2 (very-sensitive for end-to-end (global) mapping [typically used when we have a full genome reference], very-sensitive-local for partial read mapping that allows soft-clipping [typically used when mapping genomic reads to a transcriptome]
 REFERENCE=$8 # Path to reference fasta file and file name, e.g /workdir/cod/reference_seqs/gadMor2.fasta
 REFNAME=$9 # Reference name to add to output files, e.g. gadMor2
+TRHEAD=${10:-16} # Number of threads to use. Default is 16
+MINQ=${11:-0} # Minimum mapping quality filter. Default is 0 (no filter)
+BOWTIE=${12:-bowtie2} # Path to bowtie2. Default is bowtie2
+SAMTOOLS=${13:-samtools} # Path to bowtie2. Default is samtools
 
 ## Loop over each sample
 for SAMPLEFILE in `cat $SAMPLELIST`; do
@@ -37,20 +41,20 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
 	# Map the paired-end reads
 	if [ $DATATYPE = pe ]; then 
 	# We ignore the reads that get orphaned during adapter clipping because that is typically a very small proportion of reads. If a large proportion of reads get orphaned (loose their mate so they become single-end), these can be mapped in a separate step and the resulting bam files merged with the paired-end mapped reads.
-		bowtie2 -q --phred33 --$MAPPINGPRESET -p 16 -I 0 -X 1500 --fr --rg-id $SAMPLE_SEQ_ID --rg SM:$SAMPLE_ID --rg LB:$SAMPLE_ID --rg PU:$PU --rg PL:ILLUMINA -x $REFBASENAME -1 $SAMPLETOMAP$FASTQSUFFIX1 -2 $SAMPLETOMAP$FASTQSUFFIX2 -S $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.sam'
+		$BOWTIE -q --phred33 --$MAPPINGPRESET -p $TRHEAD -I 0 -X 1500 --fr --rg-id $SAMPLE_SEQ_ID --rg SM:$SAMPLE_ID --rg LB:$SAMPLE_ID --rg PU:$PU --rg PL:ILLUMINA -x $REFBASENAME -1 $SAMPLETOMAP$FASTQSUFFIX1 -2 $SAMPLETOMAP$FASTQSUFFIX2 -S $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.sam'
 	
 	# Map the single-end reads
 	elif [ $DATATYPE = se ]; then
-		bowtie2 -q --phred33 --$MAPPINGPRESET -p 16 --rg-id $SAMPLE_SEQ_ID --rg SM:$SAMPLE_ID --rg LB:$SAMPLE_ID --rg PU:$PU --rg PL:ILLUMINA -x $REFBASENAME -U $SAMPLETOMAP$FASTQSUFFIX1 -S $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.sam'
+		$BOWTIE -q --phred33 --$MAPPINGPRESET -p $TRHEAD --rg-id $SAMPLE_SEQ_ID --rg SM:$SAMPLE_ID --rg LB:$SAMPLE_ID --rg PU:$PU --rg PL:ILLUMINA -x $REFBASENAME -U $SAMPLETOMAP$FASTQSUFFIX1 -S $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.sam'
 	
 	fi
 	
 	## Convert to bam file for storage
-	samtools view -bS -F 4 $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.sam' > $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.bam'
+	$SAMTOOLS view -bS -F 4 -@ $TRHEAD $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.sam' > $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.bam'
 	rm $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.sam'
 	
 	## Filter the mapped reads
 	# Filter bam files to remove poorly mapped reads (non-unique mappings and mappings with a quality score < 20) -- do we want the quality score filter??
-	samtools view -h -q 20 $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.bam' | samtools view -buS - | samtools sort -o $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'_minq20_sorted.bam'
+	$SAMTOOLS view -h -q $MINQ $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'.bam' | samtools view -@ $TRHEAD -buS - | samtools sort -@ $TRHEAD -o $SAMPLEBAM'_'$DATATYPE'_bt2_'$REFNAME'_minq'$MINQ'_sorted.bam'
 	
 done
