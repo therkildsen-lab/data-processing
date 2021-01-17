@@ -139,6 +139,6 @@ After this is run, make sure to rename your demulitplexed fastq files so that th
 
 ## A few suggestions
 
-1. Avoid using Excel to edit your sample tables and lists unless you know what you are doing, since it may lead to weird line ending issues (see [example](https://github.com/therkildsen-lab/genomic-data-analysis/issues/3). If you are encoutering such issues, use the `dos2unix` command to convert the file endings to Unix format.
+1. Avoid using Excel to edit your sample tables and lists unless you know what you are doing, since it may lead to weird line ending issues (see [example](https://github.com/therkildsen-lab/genomic-data-analysis/issues/3)). If you are encoutering such issues, use the `dos2unix` command to convert the file endings to Unix format.
 
 2. It is a good practice to have completely unique sample IDs. For example, having one sample named `1Cod` and another sample named `11Cod` can create unexpected problems. It would be much safer to name them `01Cod` and `11Cod`. 
