@@ -6,7 +6,7 @@ SAMPLETABLE=$2 # Path to a sample table where the 1st column is the prefix of th
 MINMAPQ=$3 # Minimum mapping quality filter (can be blank, in which case the filtered won't be applied)
 
 if [ ! -z "$MINMAPQ" ]; then
-	printf 'sample_id\tdedup_mapped_bases\tavg_fragment_size\toverlap_clipped_bases\tminmapq'$MINQ'_bases\n'
+	printf 'sample_id\tdedup_mapped_bases\tavg_fragment_size\toverlap_clipped_bases\tminmapq'$MINMAPQ'_bases\n'
 else
 	printf 'sample_id\tdedup_mapped_bases\tavg_fragment_size\toverlap_clipped_bases\n'
 fi
