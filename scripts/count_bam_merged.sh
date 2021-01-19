@@ -41,7 +41,7 @@ for SAMPLEBAM in `cat $BAMLIST`; do
 		AVGFRAG=NA
 		CLIPOVERLAPBASES=NA
 		if [ ! -z "$MINMAPQ" ]; then
-			MINMAPQBASES=`$SAMTOOLS view -q $MINMAPQ $DEDUPFILE -@ 4 | $SAMTOOLS stats -@ 4| grep ^SN | cut -f 2- | grep "^bases mapped (cigar)" | cut -f 2`
+			MINMAPQBASES=`$SAMTOOLS view -h -q $MINMAPQ $DEDUPFILE -@ 4 | $SAMTOOLS stats -@ 4| grep ^SN | cut -f 2- | grep "^bases mapped (cigar)" | cut -f 2`
 		fi
 	fi
 	
