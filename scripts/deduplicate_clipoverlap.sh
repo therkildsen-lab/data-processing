@@ -24,7 +24,7 @@ for SAMPLEBAM in `cat $BAMLIST`; do
 	
 	if [ $DATATYPE != se ]; then
 		## Clip overlapping paired end reads (only necessary for paired end data)
-		$BAMUTIL clipOverlap --in $SAMPLEPREFIX'_dedup.bam' --out $SAMPLEPREFIX'_overlapclipped.bam' --stats
+		$BAMUTIL clipOverlap --in $SAMPLEPREFIX'_dedup.bam' --out $SAMPLEPREFIX'_dedup_overlapclipped.bam' --stats
 	fi
 	
 done
