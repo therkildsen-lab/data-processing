@@ -20,37 +20,37 @@ for SAMPLEBAM in `cat $BAMLIST`; do
 	
 	## Count deduplicated bases
 	DEDUPFILE=$SAMPLEPREFIX'_dedup.bam'
-	DEDUPMAPPEDBASES=`$SAMTOOLS stats $DEDUPFILE -@ 4 | grep ^SN | cut -f 2- | grep "^bases mapped (cigar)" | cut -f 2` &
+	DEDUPMAPPEDBASES=`$SAMTOOLS stats $DEDUPFILE -@ 4 | grep ^SN | cut -f 2- | grep "^bases mapped (cigar)" | cut -f 2`
 	
 	## Extract data type from the merged sample table
 	DATATYPE=`grep -P "${SAMPLESEQID}\t" $SAMPLETABLE | cut -f 6`
 	
 	if [ $DATATYPE != se ]; then
 		## Calculate average fragment length for paired end reads
-		AVGFRAG=`$SAMTOOLS view $DEDUPFILE | grep YT:Z:CP | awk '{sum+=sqrt($9^2)} END {printf "%f", sum/NR}'` &
+		AVGFRAG=`$SAMTOOLS view $DEDUPFILE | grep YT:Z:CP | awk '{sum+=sqrt($9^2)} END {printf "%f", sum/NR}'`
 		if [ "$AVGFRAG" == '' ]; then AVGFRAG=0 ; fi
 	
 		## Count overlap clipped bam files for paired end reads 
 		CLIPOVERLAPFILE=$SAMPLEPREFIX'_dedup_overlapclipped.bam'
-		CLIPOVERLAPBASES=`$SAMTOOLS stats $CLIPOVERLAPFILE -@ 4 | grep ^SN | cut -f 2- | grep "^bases mapped (cigar)" | cut -f 2` &
+		CLIPOVERLAPBASES=`$SAMTOOLS stats $CLIPOVERLAPFILE -@ 4 | grep ^SN | cut -f 2- | grep "^bases mapped (cigar)" | cut -f 2`
 		
 		if [ ! -z "$MINMAPQ" ]; then
-			MINMAPQBASES=`$SAMTOOLS view -q $MINMAPQ $CLIPOVERLAPFILE -@ 4 | $SAMTOOLS stats -@ 4| grep ^SN | cut -f 2- | grep "^bases mapped (cigar)" | cut -f 2` &
+			MINMAPQBASES=`$SAMTOOLS view -q $MINMAPQ $CLIPOVERLAPFILE -@ 4 | $SAMTOOLS stats -@ 4| grep ^SN | cut -f 2- | grep "^bases mapped (cigar)" | cut -f 2`
 		fi
 	else
 		AVGFRAG=NA
 		CLIPOVERLAPBASES=NA
 		if [ ! -z "$MINMAPQ" ]; then
-			MINMAPQBASES=`$SAMTOOLS view -q $MINMAPQ $DEDUPFILE -@ 4 | $SAMTOOLS stats -@ 4| grep ^SN | cut -f 2- | grep "^bases mapped (cigar)" | cut -f 2` &
+			MINMAPQBASES=`$SAMTOOLS view -q $MINMAPQ $DEDUPFILE -@ 4 | $SAMTOOLS stats -@ 4| grep ^SN | cut -f 2- | grep "^bases mapped (cigar)" | cut -f 2`
 		fi
 	fi
 	
 	wait 
 
 	if [ ! -z "$MINMAPQ" ]; then
-		printf "%s\t%s\t%s\t%s\t%s\n" $SAMPLEPREFIX $DEDUPMAPPEDBASES $AVGFRAG $CLIPOVERLAPBASES $MINMAPQBASES
+		printf "%s\t%s\t%s\t%s\t%s\n" $SAMPLESEQID $DEDUPMAPPEDBASES $AVGFRAG $CLIPOVERLAPBASES $MINMAPQBASES
 	else
-		printf "%s\t%s\t%s\t%s\n" $SAMPLEPREFIX $DEDUPMAPPEDBASES $AVGFRAG $CLIPOVERLAPBASES
+		printf "%s\t%s\t%s\t%s\n" $SAMPLESEQID $DEDUPMAPPEDBASES $AVGFRAG $CLIPOVERLAPBASES
 	fi
 
 done
