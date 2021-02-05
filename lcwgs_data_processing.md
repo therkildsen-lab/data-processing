@@ -72,7 +72,7 @@ An example of how a sample table can be created from a list of fastq file names 
 
 #### Install programs used
 
-If you are not working on the Therkildsen server, you might need to intall the following programs to your machine. Then you will also need to change the paths to these programs in the relavant scripts. 
+If you are not working on the Therkildsen server, you might need to intall the following programs to your machine. The program paths will then need to be inputted to each script (see script headers).
  
  * `Trimmomatic` http://www.usadellab.org/cms/?page=trimmomatic
  * `fastp` https://github.com/OpenGene/fastp 
@@ -115,7 +115,7 @@ After this is run, make sure to rename your demulitplexed fastq files so that th
 
 4. Map to reference, sort, and quality filter using [low_coverage_mapping.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/low_coverage_mapping.sh)
 
-5. Merge samples that were sequenced multiple times on different lanes (or within the same lane, with different barcodes). You should write your own script to do this, but see an example [here](https://github.com/therkildsen-lab/greenland-cod/blob/master/markdowns/data_processing.md)
+5. Merge samples that were sequenced multiple times on different lanes (or within the same lane, with different barcodes). You should write your own script to do this, but see an example [here](https://github.com/therkildsen-lab/greenland-cod/blob/master/markdowns/data_processing.md#merge-duplicated-samples)
 
 6. Deduplicate (all samples) and clip overlapping read pairs (pair-end only) using [deduplicate_clipoverlap.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/deduplicate_clipoverlap.sh)
 
