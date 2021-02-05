@@ -12,7 +12,7 @@ JOB_INDEX=0
 
 for SAMPLEBAM in `cat $BAMLIST`; do
 	## Count per position depth per sample
-	$SAMTOOLS depth -aa $SAMPLEBAM -q MINBASEQ -Q MINMAPQ | cut -f 3 > $SAMPLEBAM'.depth' &
+	$SAMTOOLS depth -aa $SAMPLEBAM -q $MINBASEQ -Q $MINMAPQ | cut -f 3 | gzip > $SAMPLEBAM'.depth.gz' &
 	
 	JOB_INDEX=$(( JOB_INDEX + 1 ))
 	if [ $JOB_INDEX == $JOBS ]; then

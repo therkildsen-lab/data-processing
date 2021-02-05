@@ -14,7 +14,7 @@ sample_table <- read_tsv(SAMPLETABLE)
 for (i in 1:length(bam_list)){
   print(i)
   print(pryr::mem_used())
-  depth <- fread(paste0(bam_list[i], ".depth"))$V1
+  depth <- fread(paste0(bam_list[i], ".depth.gz"))$V1
   mean_depth <- mean(depth)
   sd_depth <- sd(depth)
   presence <- as.logical(depth)
