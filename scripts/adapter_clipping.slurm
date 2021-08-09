@@ -47,7 +47,6 @@ SAMPLE_LIST_SLURM=$PREFIX$SAMPLELIST
 SAMPLE_TABLE_SLURM=$PREFIX$SAMPLETABLE
 ADAPTER_LIST_SLURM=$PREFIX$ADAPTERS
 SCRIPT=$PREFIX$ROOTDIR/data-processing/scripts/adapter_clipping.sh
-BASEWORKDIR=/workdir/$USER/$SLURM_JOB_ID-$SLURM_ARRAY_TASK_ID/
 
 # If the total number of samples in the SAMPLELIST is not a multiple of ARRAY_LENGTH, then the last array job will loop over a greater number of samples to reach the end of the SAMPLELIST.
 TOTAL_NUMBER_OF_SAMPLES=`grep -c ".*" $SAMPLE_LIST_SLURM`
