@@ -37,19 +37,11 @@ WORKDIR=${BASEWORKDIR}adapter_clipped/
 mkdir -p $WORKDIR
 cd $WORKDIR
 
-# If the server is cbsunt246, this will be /workdir. If the server is cbsubscb16, this will be /storage
-ROOTDIR=/`echo $BASEDIR | awk -F "/" '{print $2}'`
-/programs/bin/labutils/mount_server $SERVER $ROOTDIR
-
-# These are all small files that will only be read once. Therefore, we won't copy them over, but we will modify the path to these mounted files.
-PREFIX=/fs/$SERVER
-SAMPLE_LIST_SLURM=$PREFIX$SAMPLELIST
-SAMPLE_TABLE_SLURM=$PREFIX$SAMPLETABLE
-ADAPTER_LIST_SLURM=$PREFIX$ADAPTERS
-SCRIPT=$PREFIX$ROOTDIR/data-processing/scripts/adapter_clipping.sh
+# If the server is cbsunt246, workdir/ should be mounted. If the server is cbsubscb16, storage/ should be mounted.
+/programs/bin/labutils/mount_server $SERVER
 
 # If the total number of samples in the SAMPLELIST is not a multiple of ARRAY_LENGTH, then the last array job will loop over a greater number of samples to reach the end of the SAMPLELIST.
-TOTAL_NUMBER_OF_SAMPLES=`grep -c ".*" $SAMPLE_LIST_SLURM`
+TOTAL_NUMBER_OF_SAMPLES=`grep -c ".*" $SAMPLELIST`
 NUMBER_OF_SAMPLES_IN_EACH_ARRAY=$((TOTAL_NUMBER_OF_SAMPLES/ARRAY_LENGTH))
 
 # The samples that this array job is responsible for:
@@ -61,20 +53,20 @@ if [[ $SLURM_ARRAY_TASK_ID -eq $ARRAY_LENGTH ]]; then
 fi
 
 TEMPORARY_SAMPLE_LIST=$SLURM_ARRAY_TASK_ID.txt
-awk "NR >= $LINE_START && NR <= $LINE_END" $SAMPLE_LIST_SLURM > $TEMPORARY_SAMPLE_LIST
+awk "NR >= $LINE_START && NR <= $LINE_END" $SAMPLELIST > $TEMPORARY_SAMPLE_LIST
 
 # Copy the fastq files into this working directory
 for SAMPLEFILE in `cat $TEMPORARY_SAMPLE_LIST`; do
-  RAWFASTQ_ID=$PREFIX$RAWFASTQDIR$SAMPLEFILE
+  RAWFASTQ_ID=$RAWFASTQDIR$SAMPLEFILE
   cp $RAWFASTQ_ID$RAWFASTQSUFFIX1 .
   cp $RAWFASTQ_ID$RAWFASTQSUFFIX2 .
 done
 
 # Call the adapter_clipping.sh script, which will loop over only the samples specified by this array job.
-bash $SCRIPT $TEMPORARY_SAMPLE_LIST $SAMPLE_TABLE_SLURM $WORKDIR $BASEWORKDIR $RAWFASTQSUFFIX1 $RAWFASTQSUFFIX2 $ADAPTER_LIST_SLURM $TRIMMOMATIC $THREADS
+bash $SCRIPT $TEMPORARY_SAMPLE_LIST $SAMPLETABLE $WORKDIR $BASEWORKDIR $RAWFASTQSUFFIX1 $RAWFASTQSUFFIX2 $ADAPTERS $TRIMMOMATIC $THREADS
 
 # Copy all output files back to the base directory on the mounted server
-cp *adapter_clipped*.fastq.gz $PREFIX$BASEDIR'adapter_clipped/'
+cp *adapter_clipped*.fastq.gz $BASEDIR'adapter_clipped/'
 
 # Remove this working directory
 rm -rf $WORKDIR
