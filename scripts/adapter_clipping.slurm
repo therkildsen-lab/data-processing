@@ -16,6 +16,7 @@
 # 9. TRIMMOMATIC: path to trimmomatic (ex: /programs/trimmomatic/trimmomatic-0.39.jar). This is the same as the 8th argument provided to the adapter_clipping.sh script.
 # 10. THREADS: number of threads to use / number of "tasks" per array job (ex: 8). This is the same as the 9th argument provided to the adapter_clipping.sh script.
 # 11. ARRAY_LENGTH: the number of array jobs to divide adapter clipping into (ex: 10). This must be less than or equal to the total number of samples in the SAMPLELIST. All samples will be divided among array job as evenly as possible, and the memory and partition headers should be based on this.
+# 12. SCRIPT: path to the adapter_clipping.sh script on the computing node once mounting is complete (ex: /fs/cbsunt246/workdir/data-processing/scripts/adapter_clipping.sh)
 
 # Use the --array command to specify the array length, which must be the same as the ARRAY_LENGTH variable passed through --export
 # --array=1-$ARRAY_LENGTH
@@ -40,9 +41,8 @@ cd $WORKDIR
 # If the server is cbsunt246, workdir/ should be mounted. If the server is cbsubscb16, storage/ should be mounted.
 /programs/bin/labutils/mount_server $SERVER
 
-TOTAL_NUMBER_OF_SAMPLES=`grep -c ".*" $SAMPLELIST`
-
 # The following operation is used to divide the sample list as evenly among array jobs as possible.
+TOTAL_NUMBER_OF_SAMPLES=`grep -c ".*" $SAMPLELIST`
 QUOTIENT=$((TOTAL_NUMBER_OF_SAMPLES/ARRAY_LENGTH))
 REMAINDER=$((TOTAL_NUMBER_OF_SAMPLES%ARRAY_LENGTH))
 if [[ $SLURM_ARRAY_TASK_ID -le $REMAINDER ]]; then
