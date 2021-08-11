@@ -87,7 +87,7 @@ else
 fi
 
 # Copy all output files back to the base directory on the mounted server
-cp * $BASEDIR'qual_filtered/'
+cp *adapter_clipped* $BASEDIR'qual_filtered/'
 
 # Remove this working directory and other subfolders
 rm -rf $BASEWORKDIR
