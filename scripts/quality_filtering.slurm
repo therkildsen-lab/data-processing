@@ -1,4 +1,5 @@
 #!/bin/bash -l
+#SBATCH --nodes=1
 #SBATCH --job-name=quality_filtering
 #SBATCH --output=quality_filtering.log
 

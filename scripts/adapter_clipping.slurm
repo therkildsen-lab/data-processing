@@ -1,4 +1,5 @@
 #!/bin/bash -l
+#SBATCH --nodes=1
 #SBATCH --job-name=adapter_clipping
 #SBATCH --output=adapter_clipping.log
 
