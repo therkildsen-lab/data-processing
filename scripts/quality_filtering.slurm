@@ -86,7 +86,7 @@ else
 fi
 
 # Copy all output files back to the base directory on the mounted server
-cp *_adapter_clipped_qual_filtered*.fastq.gz $BASEDIR'qual_filtered/'
+cp * $BASEDIR'qual_filtered/'
 
 # Remove this working directory and other subfolders
 rm -rf $BASEWORKDIR
