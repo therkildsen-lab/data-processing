@@ -8,7 +8,7 @@
 # Use the --export=VARIABLE_NAME=VALUE command to pass in these variables (the order doesn't matter):
 # 01. SERVER: the server and the directory to mount to the computing node (ex: 'cbsunt246 workdir/' or 'cbsubscb16 storage/')
 # 02. BASEDIR: path to the base directory on the computing node (once mounting is complete) where bam files will be stored in subdirectory titled "bam/" (ex: /fs/cbsunt246/workdir/cod/greenland-cod/).
-# 03. INPUTDIR: path to the base directory on the computing node (once mounting is complete) where fastq files ready for mapping are stored (ex: /fs/cbsunt246/workdir/cod/greenland-cod/qual_filtered).
+# 03. FASTQDIR: path to the base directory on the computing node (once mounting is complete) where fastq files ready for mapping are stored (ex: /fs/cbsunt246/workdir/cod/greenland-cod/qual_filtered).
 # 04. SAMPLELIST: path to a list of prefixes of the raw fastq files on the computing node once mounting is complete. This should be a subset of the the 1st column of the sample table (ex: /fs/cbsunt246/workdir/cod/greenland-cod/sample_lists/sample_list_pe_1.tsv). This is the same as the 1st argument provided to the low_coverage_mapping.sh script.
 # 05. SAMPLETABLE: path to a sample table on the computing node once mounting is complete (ex: /fs/cbsunt246/workdir/cod/greenland-cod/sample_lists/sample_table.tsv), where the 1st column is the prefix of the raw fastq files, the 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. The 6th column should be data type, which is either pe or se. This is the same as the 2nd argument provided to the low_coverage_mapping.sh script.
 # 06. FASTQSUFFIX1: Suffix to fastq files. Use forward reads with paired-end data. An example for the quality-filtered Greenland paired-end data is: _adapter_clipped_qual_filtered_f_paired.fastq.gz
@@ -48,7 +48,7 @@ cd $WORKDIR
 # This requires an adapter_clipped/ subfolder for the input and a qual_filtered/ subfolder for the output
 mkdir fastq
 mkdir bam
-FASTQDIR=$WORKDIR'fastq/'
+INPUTDIR=$WORKDIR'fastq/'
 
 # If the server is cbsunt246, workdir/ should be mounted. If the server is cbsubscb16, storage/ should be mounted.
 /programs/bin/labutils/mount_server $SERVER
@@ -79,15 +79,15 @@ for SAMPLEFILE in `cat $TEMPORARY_SAMPLE_LIST`; do
 	SAMPLE_SEQ_ID=$SAMPLE_ID'_'$SEQ_ID'_'$LANE_ID
 
   if [ $DATATYPE = pe ]; then
-    cp $INPUTDIR'/'$SAMPLE_SEQ_ID$FASTQSUFFIX1 $FASTQDIR
-    cp $INPUTDIR'/'$SAMPLE_SEQ_ID$FASTQSUFFIX2 $FASTQDIR
+    cp $FASTQDIR'/'$SAMPLE_SEQ_ID$FASTQSUFFIX1 $INPUTDIR
+    cp $FASTQDIR'/'$SAMPLE_SEQ_ID$FASTQSUFFIX2 $INPUTDIR
   elif [ $DATATYPE = se ]; then
-    cp $INPUTDIR'/'$SAMPLE_SEQ_ID$FASTQSUFFIX1 $FASTQDIR
+    cp $FASTQDIR'/'$SAMPLE_SEQ_ID$FASTQSUFFIX1 $INPUTDIR
   fi
 done
 
 # Call the low_coverage_mapping.sh script, which will loop over only the samples specified by this array job.
-bash $SCRIPT $TEMPORARY_SAMPLE_LIST $SAMPLETABLE $FASTQDIR $WORKDIR $FASTQSUFFIX1 $FASTQSUFFIX2 $MAPPINGPRESET $REFERENCE $REFNAME $THREADS $MINQ $BOWTIE $SAMTOOLS
+bash $SCRIPT $TEMPORARY_SAMPLE_LIST $SAMPLETABLE $INPUTDIR $WORKDIR $FASTQSUFFIX1 $FASTQSUFFIX2 $MAPPINGPRESET $REFERENCE $REFNAME $THREADS $MINQ $BOWTIE $SAMTOOLS
 
 # Copy all output files back to the base directory on the mounted server
 cp ${WORKDIR}/bam/*bam $BASEDIR'bam/'
