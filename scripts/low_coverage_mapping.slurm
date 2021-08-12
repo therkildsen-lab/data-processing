@@ -87,7 +87,7 @@ for SAMPLEFILE in `cat $TEMPORARY_SAMPLE_LIST`; do
 done
 
 # Call the low_coverage_mapping.sh script, which will loop over only the samples specified by this array job.
-echo $SCRIPT $TEMPORARY_SAMPLE_LIST $SAMPLETABLE $FASTQDIR $WORKDIR $FASTQSUFFIX1 $FASTQSUFFIX2 $MAPPINGPRESET $REFERENCE $REFNAME $TRHEADS $MINQ $BOWTIE $SAMTOOLS
+bash $SCRIPT $TEMPORARY_SAMPLE_LIST $SAMPLETABLE $FASTQDIR $WORKDIR $FASTQSUFFIX1 $FASTQSUFFIX2 $MAPPINGPRESET $REFERENCE $REFNAME $THREADS $MINQ $BOWTIE $SAMTOOLS
 
 # Copy all output files back to the base directory on the mounted server
 cp ${WORKDIR}/bam/*bam $BASEDIR'bam/'
