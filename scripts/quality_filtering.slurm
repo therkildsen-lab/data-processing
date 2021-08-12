@@ -9,7 +9,7 @@
 # 1. SERVER: the server and the directory to mount to the computing node (ex: 'cbsunt246 workdir/' or 'cbsubscb16 storage/')
 # 2. BASEDIR: path to the base directory on the computing node (once mounting is complete) where adapter clipped fastq file are already stored in subdirectory titled "adapter_clipped/" and where the quality-filtered fastq files will be placed in a subdirectory titled "qual_filtered/" (ex: /fs/cbsunt246/workdir/cod/greenland-cod/). This is the same as the 3rd argument provided to the quality_filtering.sh script.
 # 3. SAMPLELIST: path to a list of prefixes of the raw fastq files on the computing node once mounting is complete. This should be a subset of the the 1st column of the sample table (ex: /fs/cbsunt246/workdir/cod/greenland-cod/sample_lists/sample_list_pe_1.tsv). This is the same as the 1st argument provided to the quality_filtering.sh script.
-# 4. SAMPLETABLE: path to a sample table on the computing node once mounting is complete (ex: /workdir/cod/greenland-cod/sample_lists/sample_table.tsv), where the 1st column is the prefix of the raw fastq files, the 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. The 6th column should be data type, which is either pe or se. This is the same as the 2nd argument provided to the quality_filtering.sh script.
+# 4. SAMPLETABLE: path to a sample table on the computing node once mounting is complete (ex: /fs/cbsunt246//workdir/cod/greenland-cod/sample_lists/sample_table.tsv), where the 1st column is the prefix of the raw fastq files, the 4th column is the sample ID, the 2nd column is the lane number, and the 3rd column is sequence ID. The combination of these three columns have to be unique. The 6th column should be data type, which is either pe or se. This is the same as the 2nd argument provided to the quality_filtering.sh script.
 # 5. FILTER: the type of quality filtering. One of: polyg (forced PolyG trimming only), quality (quality trimming, PolyG will be trimmed as well if processing NextSeq/NovaSeq data), or length (trim all reads to a maximum length). This is the same as the 4th argument provided to the quality_filtering.sh script.
 # 6. MAXLENGTH: if FILTER=length, then this is required and represents the maximum length (ex: 100). This is the same as the 7th argument provided to the quality_filtering.sh script. If FILTER is not length, then this argument is not needed.
 # 7. FASTP: the path to the fastp program that can be accessed from the SLURM cluster (default was /workdir/programs/fastp_0.19.7/fastp; to modify this to the mounted path, use /fs/cbsunt246/workdir/programs/fastp_0.19.7/fastp. The path to the fastp program installed on the SLURM cluster is /programs/fastp-0.20.0/bin/fastp). This is the same as the 6th argument provided to the quality_filtering.sh script.
@@ -30,6 +30,9 @@
 # ex: --partition=short
 
 #####################################
+
+# Keep a record of the Job ID
+echo $SLURM_JOB_ID
 
 # Create and move to working directory for job
 BASEWORKDIR=/workdir/$USER/$SLURM_JOB_ID-$SLURM_ARRAY_TASK_ID/

@@ -33,6 +33,9 @@
 
 #####################################
 
+# Keep a record of the Job ID
+echo $SLURM_JOB_ID
+
 # Create and move to working directory for job
 BASEWORKDIR=/workdir/$USER/$SLURM_JOB_ID-$SLURM_ARRAY_TASK_ID/
 WORKDIR=${BASEWORKDIR}adapter_clipped/
