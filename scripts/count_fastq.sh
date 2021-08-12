@@ -20,10 +20,10 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
 	RAWFASTQFILES=$RAWFASTQDIR$SAMPLEFILE'*.gz'  # The input path and file prefix
 	
 	# Count the number of reads in raw fastq files. We only need to count the forward reads, since the reverse will contain exactly the same number of reads. fastq files contain 4 lines per read, so the number of total reads will be half of this line number. 
-	RAWREADS=`zcat $RAWFASTQFILES | wc -l`
+	RAWREADS=`zcat $RAWFASTQFILES | wc -l`  &
 	
 	# Count the number of bases in raw fastq files. We only need to count the forward reads, since the reverse will contain exactly the same number of bases. The total number of reads will be twice this count. 
-	RAWBASES=`zcat $RAWFASTQFILES | awk 'NR%4==2' | tr -d "\n" | wc -m` 
+	RAWBASES=`zcat $RAWFASTQFILES | awk 'NR%4==2' | tr -d "\n" | wc -m`  &
 	
 	# Extract relevant values from a table of sample, sequencing, and lane ID (here in columns 4, 3, 2, respectively) for each sequenced library
 	SAMPLE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 4`
@@ -35,7 +35,7 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
 	ADAPTERFILES=$BASEDIR'adapter_clipped/'$SAMPLE_SEQ_ID'*.gz'
 	
 	# Count all bases in adapter clipped files. 
-	ADPTERCLIPBASES=`zcat $ADAPTERFILES | awk 'NR%4==2' | tr -d "\n" | wc -m`
+	ADPTERCLIPBASES=`zcat $ADAPTERFILES | awk 'NR%4==2' | tr -d "\n" | wc -m`  &
 	
 	# If reads are quality filtered, count quality filtered files.
 	if $QUALFILTERED; then
@@ -44,15 +44,17 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
 		QUALFILES=$BASEDIR'qual_filtered/'$SAMPLE_SEQ_ID'*.gz'
 		
 		# Count bases in quality trimmed files.
-		QUALFILTPBASES=`zcat $QUALFILES | awk 'NR%4==2' | tr -d "\n" | wc -m`
+		QUALFILTPBASES=`zcat $QUALFILES | awk 'NR%4==2' | tr -d "\n" | wc -m` &
 		
 		# Write the counts in appropriate order.
+		wait
 		printf "%s\t%s\t%s\t%s\t%s\n" $SAMPLE_SEQ_ID $((RAWREADS/4)) $RAWBASES $ADPTERCLIPBASES $QUALFILTPBASES
 		
 		# When reads are not quality filtered, directly write the output
 	else 
 		
 		# Write the counts in appropriate order.
+		wait
 		printf "%s\t%s\t%s\t%s\n" $SAMPLE_SEQ_ID $((RAWREADS/4)) $RAWBASES $ADPTERCLIPBASES
 		
 	fi
