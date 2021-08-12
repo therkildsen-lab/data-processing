@@ -20,11 +20,12 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
 	RAWFASTQFILES=$RAWFASTQDIR$SAMPLEFILE'*.gz'  # The input path and file prefix
 	
 	# Count the number of reads in raw fastq files. We only need to count the forward reads, since the reverse will contain exactly the same number of reads. fastq files contain 4 lines per read, so the number of total reads will be half of this line number. 
-	RAWREADS=`zcat $RAWFASTQFILES | wc -l`  &
+	zcat $RAWFASTQFILES | wc -l  > ${BASEDIR}/sample_lists/count_fastq_1.tmp &
 	
 	# Count the number of bases in raw fastq files. We only need to count the forward reads, since the reverse will contain exactly the same number of bases. The total number of reads will be twice this count. 
-	RAWBASES=`zcat $RAWFASTQFILES | awk 'NR%4==2' | tr -d "\n" | wc -m`  &
+	zcat $RAWFASTQFILES | awk 'NR%4==2' | tr -d "\n" | wc -m > ${BASEDIR}/sample_lists/count_fastq_2.tmp  &
 	
+
 	# Extract relevant values from a table of sample, sequencing, and lane ID (here in columns 4, 3, 2, respectively) for each sequenced library
 	SAMPLE_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 4`
 	SEQ_ID=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 3`
@@ -35,7 +36,7 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
 	ADAPTERFILES=$BASEDIR'adapter_clipped/'$SAMPLE_SEQ_ID'*.gz'
 	
 	# Count all bases in adapter clipped files. 
-	ADPTERCLIPBASES=`zcat $ADAPTERFILES | awk 'NR%4==2' | tr -d "\n" | wc -m`  &
+	zcat $ADAPTERFILES | awk 'NR%4==2' | tr -d "\n" | wc -m  > ${BASEDIR}/sample_lists/count_fastq_3.tmp &
 	
 	# If reads are quality filtered, count quality filtered files.
 	if $QUALFILTERED; then
@@ -44,10 +45,14 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
 		QUALFILES=$BASEDIR'qual_filtered/'$SAMPLE_SEQ_ID'*.gz'
 		
 		# Count bases in quality trimmed files.
-		QUALFILTPBASES=`zcat $QUALFILES | awk 'NR%4==2' | tr -d "\n" | wc -m` &
+		zcat $QUALFILES | awk 'NR%4==2' | tr -d "\n" | wc -m > ${BASEDIR}/sample_lists/count_fastq_4.tmp &
 		
 		# Write the counts in appropriate order.
 		wait
+		RAWREADS=`cat ${BASEDIR}/sample_lists/count_fastq_1.tmp`
+		RAWBASES=`cat ${BASEDIR}/sample_lists/count_fastq_2.tmp`
+		ADPTERCLIPBASES=`cat ${BASEDIR}/sample_lists/count_fastq_3.tmp`
+		QUALFILTPBASES=`cat ${BASEDIR}/sample_lists/count_fastq_4.tmp`
 		printf "%s\t%s\t%s\t%s\t%s\n" $SAMPLE_SEQ_ID $((RAWREADS/4)) $RAWBASES $ADPTERCLIPBASES $QUALFILTPBASES
 		
 		# When reads are not quality filtered, directly write the output
@@ -55,8 +60,11 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
 		
 		# Write the counts in appropriate order.
 		wait
+		RAWREADS=`cat ${BASEDIR}/sample_lists/count_fastq_1.tmp`
+		RAWBASES=`cat ${BASEDIR}/sample_lists/count_fastq_2.tmp`
+		ADPTERCLIPBASES=`cat ${BASEDIR}/sample_lists/count_fastq_3.tmp`
 		printf "%s\t%s\t%s\t%s\n" $SAMPLE_SEQ_ID $((RAWREADS/4)) $RAWBASES $ADPTERCLIPBASES
 		
 	fi
-	
+	rm ${BASEDIR}/sample_lists/count_fastq_?.tmp
 done
