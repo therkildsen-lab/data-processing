@@ -41,16 +41,14 @@
 echo $SLURM_JOB_ID
 
 # Create and move to working directory for job
-BASEWORKDIR=/workdir/$USER/$SLURM_JOB_ID-$SLURM_ARRAY_TASK_ID/
-mkdir -p $BASEWORKDIR
-cd $BASEWORKDIR
+WORKDIR=/workdir/$USER/$SLURM_JOB_ID-$SLURM_ARRAY_TASK_ID/
+mkdir -p $WORKDIR
+cd $WORKDIR
 
 # This requires an adapter_clipped/ subfolder for the input and a qual_filtered/ subfolder for the output
 mkdir fastq
 mkdir bam
-FASTQDIR=${BASEWORKDIR}fastq/
-WORKDIR=${BASEWORKDIR}bam/
-cd $WORKDIR
+FASTQDIR=$WORKDIR'fastq/'
 
 # If the server is cbsunt246, workdir/ should be mounted. If the server is cbsubscb16, storage/ should be mounted.
 /programs/bin/labutils/mount_server $SERVER
@@ -92,7 +90,7 @@ done
 bash $SCRIPT $TEMPORARY_SAMPLE_LIST $SAMPLETABLE $FASTQDIR $WORKDIR $FASTQSUFFIX1 $FASTQSUFFIX2 $MAPPINGPRESET $REFERENCE $REFNAME $TRHEADS $MINQ $BOWTIE $SAMTOOLS
 
 # Copy all output files back to the base directory on the mounted server
-cp *bam $BASEDIR'bam/'
+cp ${WORKDIR}/bam/*bam $BASEDIR'bam/'
 
 # Remove this working directory and other subfolders
-rm -rf $BASEWORKDIR
+rm -rf $WORKDIR
