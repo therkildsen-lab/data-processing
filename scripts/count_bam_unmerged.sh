@@ -5,7 +5,8 @@ SAMPLETABLE=$2 # Path to a sample table where the 1st column is the prefix of th
 BASEDIR=$3 # Path to the base directory where adapter clipped fastq file are stored in a subdirectory titled "adapter_clipped" and into which output files will be written to separate subdirectories. An example for the Greenland cod data is: /workdir/cod/greenland-cod/
 REFNAME=$4 # Reference name to add to output files, e.g. gadMor2
 SAMTOOLS=${5:-samtools} # Path to samtools
-MINQ=$6 # Minimum mapping quality filter used in the sorting step. When left undefined, the sorted bam file will not be counted (e.g. when reads are not filtered in the sorting step).
+THREADS=${6:-1} # Number of parallel threads to use. Default is 1. 
+MINQ=$7 # Minimum mapping quality filter used in the sorting step. When left undefined, the sorted bam file will not be counted (e.g. when reads are not filtered in the sorting step).
 
 if [ -z "$MINQ" ]; then
 	printf 'sample_id\tmapped_bases\n'
@@ -26,14 +27,14 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
 	
 	## Count raw mapped bases
 	RAWBAMFILE=$BASEDIR'bam/'$SAMPLE_SEQ_ID'_'$DATATYPE'_bt2_'$REFNAME'.bam'
-	MAPPEDBASES=`$SAMTOOLS stats $RAWBAMFILE | grep ^SN | cut -f 2- | grep "^bases mapped (cigar)" | cut -f 2`
+	MAPPEDBASES=`$SAMTOOLS stats $RAWBAMFILE -@ $THREADS | grep ^SN | cut -f 2- | grep "^bases mapped (cigar)" | cut -f 2`
 	
 	if [ -z "$MINQ" ]; then
 		printf "%s\t%s\n" $SAMPLE_SEQ_ID $MAPPEDBASES
 	else
 		## Count quality filtered mapped bases
 		QUALFILTBAMFILE=$BASEDIR'bam/'$SAMPLE_SEQ_ID'_'$DATATYPE'_bt2_'$REFNAME'_minq'$MINQ'_sorted.bam'
-		QUAFILTBASES=`$SAMTOOLS stats $QUALFILTBAMFILE | grep ^SN | cut -f 2- | grep "^bases mapped (cigar)" | cut -f 2`
+		QUAFILTBASES=`$SAMTOOLS stats $QUALFILTBAMFILE -@ $THREADS | grep ^SN | cut -f 2- | grep "^bases mapped (cigar)" | cut -f 2`
 	
 		printf "%s\t%s\t%s\n" $SAMPLE_SEQ_ID $MAPPEDBASES $QUAFILTBASES
 	fi
