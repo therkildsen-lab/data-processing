@@ -56,7 +56,7 @@ INPUTDIR=$WORKDIR'fastq/'
 
 # Copy the reference sequence and indices to the computing node
 REFBASENAME="${REFERENCE%%.*}"
-cp ${REFBASENAME}'.*' $WORKDIR'reference/'
+cp ${REFBASENAME}.* $WORKDIR'reference/'
 
 # The following operation is used to divide the sample list as evenly among array jobs as possible.
 TOTAL_NUMBER_OF_SAMPLES=`grep -c ".*" $SAMPLELIST`
