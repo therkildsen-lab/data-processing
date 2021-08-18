@@ -35,7 +35,7 @@ for SAMPLEFILE in `cat $SAMPLELIST`; do
 	PU=`grep -P "${SAMPLEFILE}\t" $SAMPLETABLE | cut -f 2`
 	
 	## Define reference base name
-	REFBASENAME="${REFERENCE%.*}"
+	REFBASENAME="${REFERENCE%%.*}"
 	
 	## Map reads to the reference 
 	# Map the paired-end reads

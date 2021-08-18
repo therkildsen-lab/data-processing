@@ -48,10 +48,15 @@ cd $WORKDIR
 # This requires an adapter_clipped/ subfolder for the input and a qual_filtered/ subfolder for the output
 mkdir fastq
 mkdir bam
+mkdir reference
 INPUTDIR=$WORKDIR'fastq/'
 
 # If the server is cbsunt246, workdir/ should be mounted. If the server is cbsubscb16, storage/ should be mounted.
 /programs/bin/labutils/mount_server $SERVER
+
+# Copy the reference sequence and indices to the computing node
+REFBASENAME="${REFERENCE%%.*}"
+cp ${REFBASENAME}'.*' $WORKDIR'reference/'
 
 # The following operation is used to divide the sample list as evenly among array jobs as possible.
 TOTAL_NUMBER_OF_SAMPLES=`grep -c ".*" $SAMPLELIST`
@@ -87,7 +92,7 @@ for SAMPLEFILE in `cat $TEMPORARY_SAMPLE_LIST`; do
 done
 
 # Call the low_coverage_mapping.sh script, which will loop over only the samples specified by this array job.
-bash $SCRIPT $TEMPORARY_SAMPLE_LIST $SAMPLETABLE $INPUTDIR $WORKDIR $FASTQSUFFIX1 $FASTQSUFFIX2 $MAPPINGPRESET $REFERENCE $REFNAME $THREADS $MINQ $BOWTIE $SAMTOOLS
+bash $SCRIPT $TEMPORARY_SAMPLE_LIST $SAMPLETABLE $INPUTDIR $WORKDIR $FASTQSUFFIX1 $FASTQSUFFIX2 $MAPPINGPRESET $WORKDIR'reference/'${REFBASENAME##*/} $REFNAME $THREADS $MINQ $BOWTIE $SAMTOOLS
 
 # Copy all output files back to the base directory on the mounted server
 cp ${WORKDIR}/bam/*bam $BASEDIR'bam/'
