@@ -1,7 +1,7 @@
 #!/bin/bash -l
 #SBATCH --nodes=1
-#SBATCH --job-name=low_coverage_mapping
-#SBATCH --output=low_coverage_mapping.log
+#SBATCH --job-name=deduplicate_clipoverlap
+#SBATCH --output=deduplicate_clipoverlap.log
 
 ########## REQUIREMENTS ########## 
 
@@ -13,7 +13,7 @@
 # 05. PICARD: the path to the picard program that can be accessed from the SLURM cluster (ex: /programs/picard-tools-2.9.0/picard.jar).
 # 06. BAMUTIL: the path the the bamutil program that can be accessed from the SLUMR cluster (ex: /programs/bamUtil/bam)
 # 07. ARRAY_LENGTH: the number of array jobs to divide adapter clipping into. This must be less than or equal to the total number of samples in the BAMLIST. The number of samples that will be processed by each array job is equal to floor(total number of samples / ARRAY_LENGTH), and the memory and partition headers should be based on this.
-# 08. SCRIPT: path to the low_coverage_mapping.sh script on the computing node once mounting is complete (ex: /fs/cbsunt246/workdir/data-processing/scripts/low_coverage_mapping.sh)
+# 08. SCRIPT: path to the deduplicate_clipoverlap.sh script on the computing node once mounting is complete (ex: /fs/cbsunt246/workdir/data-processing/scripts/deduplicate_clipoverlap.sh)
 
 # Use the --array command to specify the array length, which must be the same as the ARRAY_LENGTH variable passed through --export
 # --array=1-$ARRAY_LENGTH
