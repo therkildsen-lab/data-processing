@@ -79,7 +79,7 @@ done
 bash $SCRIPT $TEMPORARY_BAM_LIST_LOCAL $SAMPLETABLE $JAVA $PICARD $BAMUTIL
 
 # Copy all output files back to the base directory on the mounted server
-cp ${BAMDIR_LOCAL}/*_dedup_* $BAMDIR_MOUNTED
+cp ${BAMDIR_LOCAL}/*_dedup* $BAMDIR_MOUNTED
 cp ${BAMDIR_LOCAL}/*_dupstat.txt $BAMDIR_MOUNTED
 
 # Remove this working directory and other subfolders
