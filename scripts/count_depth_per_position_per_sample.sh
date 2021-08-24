@@ -20,3 +20,5 @@ for SAMPLEBAM in `cat $BAMLIST`; do
 		JOB_INDEX=0
 	fi
 done
+
+wait
