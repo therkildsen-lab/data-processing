@@ -109,7 +109,7 @@ _R2.fastq.gz \
 ## Computer cluster
 
 Submit the
-[adapter\_clipping.slurm](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/adapter_clipping.sh)
+[adapter\_clipping.slurm](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/adapter_clipping.slurm)
 script with `sbatch` and use the `--export=VARIABLE_NAME=VALUE` command
 to pass the following input variables **in any order**:
 

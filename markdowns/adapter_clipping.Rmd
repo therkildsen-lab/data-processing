@@ -85,7 +85,7 @@ _R2.fastq.gz \
 
 ## Computer cluster
 
-Submit the [adapter_clipping.slurm](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/adapter_clipping.sh) script with `sbatch` and use the `--export=VARIABLE_NAME=VALUE` command to pass the following input variables **in any order**: 
+Submit the [adapter_clipping.slurm](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/adapter_clipping.slurm) script with `sbatch` and use the `--export=VARIABLE_NAME=VALUE` command to pass the following input variables **in any order**: 
 
 1. `SERVER`: the server and the directory to mount to the computing node (e.g. `SERVER='cbsunt246 workdir/'` or `SERVER='cbsubscb16 storage/'`)
 2. `BASEDIR`: path to the base directory on the computing node (once mounting is complete) where adapter clipped fastq file are to be stored in a subdirectory titled `adapter_clipped` (e.g. `BASEDIR=/fs/cbsunt246/workdir/cod/greenland-cod/`).
