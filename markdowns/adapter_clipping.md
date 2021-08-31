@@ -1,15 +1,15 @@
 Adapter clipping
 ================
 
--   [Introduction](#introduction)
--   [Standalone server](#standalone-server)
--   [Computer cluster](#computer-cluster)
--   [Output](#output)
--   [Notes](#notes)
+  - [Introduction](#introduction)
+  - [Standalone server](#standalone-server)
+  - [Computer cluster](#computer-cluster)
+  - [Output](#output)
+  - [Notes](#notes)
 
 ## Introduction
 
-Adapter clipping is process that removes adapter read-throughs in
+Adapter clipping is the process that removes adapter read-throughs in
 sequencing reads where the insert size is shorter than the read length.
 It is a required step for our pipeline.
 
@@ -114,8 +114,8 @@ script with `sbatch` and use the `--export=VARIABLE_NAME=VALUE` command
 to pass the following input variables **in any order**:
 
 1.  `SERVER`: the server and the directory to mount to the computing
-    node (e.g. `SERVER='cbsunt246 workdir/'` or
-    `SERVER='cbsubscb16 storage/'`)
+    node (e.g. `SERVER='cbsunt246 workdir/'` or `SERVER='cbsubscb16
+    storage/'`)
 2.  `BASEDIR`: path to the base directory on the computing node (once
     mounting is complete) where adapter clipped fastq file are to be
     stored in a subdirectory titled `adapter_clipped`
@@ -210,5 +210,11 @@ sample with paired-end data.
 
 ## Notes
 
--   `Trimmomatic` options are currently hardcoded. Please submit a
+  - `Trimmomatic` options are currently hardcoded. Please submit a
     GitHub issue if you would like them to be customizable.
+  - If your have more than one type of adapter sequences in your data
+    (e.g. when libraries prepared using different protocols are pooled
+    together), make sure that you divide the fastq list by adapter
+    sequence type, and run them separately (since their associated
+    adapter sequence files are different). After this step of adapter
+    trimming, you combine them again.

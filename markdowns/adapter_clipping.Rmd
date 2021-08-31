@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Introduction
 
-Adapter clipping is process that removes adapter read-throughs in sequencing reads where the insert size is shorter than the read length. It is a required step for our pipeline. 
+Adapter clipping is the process that removes adapter read-throughs in sequencing reads where the insert size is shorter than the read length. It is a required step for our pipeline. 
 
 We use `Trimmomatic` to perform adapter clipping. Please make sure that it is installed on your machine. In addition, a file with adapter sequences is required. Below is an example adapter file for Nextera libraries.
 
@@ -143,4 +143,5 @@ Output from this step are adapter clipped fastq files and they will be written i
 
 ## Notes
 
-- `Trimmomatic` options are currently hardcoded. Please submit a GitHub issue if you would like them to be customizable.
+* `Trimmomatic` options are currently hardcoded. Please submit a GitHub issue if you would like them to be customizable.
+* If your have more than one type of adapter sequences in your data (e.g. when libraries prepared using different protocols are pooled together), make sure that you divide the fastq list by adapter sequence type, and run them separately (since their associated adapter sequence files are different). After this step of adapter trimming, you combine them again. 
