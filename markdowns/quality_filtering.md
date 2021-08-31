@@ -9,12 +9,12 @@ Quality filtering
 
 ## Introduction
 
-Quality filtering is the process that removes poly-G tails, low-quality
-bases, extremely short sequencing reads, etc. It is an optional step for
-our pipeline.
+Quality filtering is the process that removes poly-G tails from
+sequencing reads, filters out low-quality reads, trims all reads to the
+same length, etc. It is an **optional** step in our pipeline.
 
-We use `fastp` to perform quality filtering. Currently, we support three
-functionalities:
+We use `fastp` to perform quality filtering. Currently, our script
+supports three functionalities:
 
   - `polyg`: a 4-base sliding window moves from the begining of the read
     to the end, cutting everything after the window in which the average
@@ -26,6 +26,9 @@ functionalities:
     quality scores lower than 15 are dropped.
   - `length`: reads with length exceeding a certain threshold will be
     trimmed to that threshold.
+
+We tend to use the `polyg` option the most, when the data is generated
+in NextSeq and NovaSeq platforms.
 
 <br>
 
