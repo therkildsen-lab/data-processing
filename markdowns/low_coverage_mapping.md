@@ -1,0 +1,221 @@
+Read alignment
+================
+
+  - [Introduction](#introduction)
+  - [Standalone server](#standalone-server)
+  - [Computer cluster](#computer-cluster)
+  - [Output](#output)
+  - [Notes](#notes)
+
+## Introduction
+
+Read alignment is the process where short sequencing reads (in fastq
+format) are mapped to a reference genome. The resulting alignment files
+(in bam format) are subsequently sorted and *optionally* filtered based
+on the mapping quality scores. It is an required step in our pipeline.
+
+We use `bowtie2` to perform read alignment, and `samtools` for sorting
+and filtering.
+
+<br>
+
+## Standalone server
+
+Run the
+[low\_coverage\_mapping.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/low_coverage_mapping.sh)
+script with `nohup bash` and pass the following input variables as
+positional parameters **in the given order**:
+
+1.  `SAMPLELIST`: Path to a list of prefixes of the raw fastq files. It
+    should be a subset of the the 1st column of the sample table
+    (e.g. `/workdir/cod/greenland-cod/sample_lists/sample_list_pe_2.tsv`).
+2.  `SAMPLETABLE`: Path to a sample table where the 1st column is the
+    prefix of the raw fastq files. The 4th column is the sample ID, the
+    2nd column is the lane number, and the 3rd column is sequence ID.
+    The combination of these three columns have to be unique. The 6th
+    column should be data type, which is either pe or se
+    (e.g. `/workdir/cod/greenland-cod/sample_lists/sample_table.tsv`).
+3.  `FASTQDIR`: Path to the directory where alignment-ready fastq files
+    are stored (e.g. `/workdir/cod/greenland-cod/qual_filtered/`).
+4.  `BASEDIR`: Path to the base directory into which output bam files
+    will be written to a `bam` subdirectory
+    (e.g. `/workdir/cod/greenland-cod/`).
+5.  `FASTQSUFFIX1`: Suffix to fastq files. Use forward reads with
+    paired-end data.
+    (e.g. `_adapter_clipped_qual_filtered_f_paired.fastq.gz`).
+6.  `FASTQSUFFIX2`: Suffix to fastq files. Use reverse reads with
+    paired-end data.
+    (e.g. `_adapter_clipped_qual_filtered_r_paired.fastq.gz`)
+7.  `MAPPINGPRESET`: The pre-set option to use for mapping in `bowtie2`
+    (`very-sensitive` for end-to-end (global) mapping \[typically used
+    when we have a full genome reference\], `very-sensitive-local` for
+    partial read mapping that allows soft-clipping \[typically used when
+    mapping genomic reads to a transcriptome\]).
+8.  `REFERENCE`: Path to reference fasta file and file name
+    (e.g. `/workdir/cod/reference_seqs/gadMor3.fasta`).
+9.  `REFNAME`: Reference name to add to output files (e.g. `gadMor3`).
+10. `THREADS`: Number of threads for `bowtie2` and `samtools` to use
+    (default to `8` if not specified).
+11. `MINQ`: Minimum mapping quality filter (default to `0`, which means
+    no filter, if not specified).
+12. `BOWTIE`: Path to `bowtie2` (default to `bowtie2` if not specified)
+13. `SAMTOOLS`: Path to `samtools` (default to `samtools` if not
+    specified)
+
+<br>
+
+Below is an example taken from the Greenland cod project:
+
+``` bash
+nohup bash /workdir/data-processing/scripts/low_coverage_mapping.sh \
+/workdir/cod/greenland-cod/sample_lists/sample_list_pe_2.tsv \
+/workdir/cod/greenland-cod/sample_lists/sample_table.tsv \
+/workdir/cod/greenland-cod/qual_filtered/ \
+/workdir/cod/greenland-cod/ \
+_adapter_clipped_qual_filtered_f_paired.fastq.gz \
+_adapter_clipped_qual_filtered_r_paired.fastq.gz \
+very-sensitive \
+/workdir/cod/reference_seqs/gadMor3.fasta \
+gadMor3 \
+8 \
+0 \
+bowtie2 \
+samtools \
+> /workdir/cod/greenland-cod/nohups/low_coverage_mapping_pe_2.nohup &
+```
+
+<br>
+
+## Computer cluster
+
+Submit the
+[low\_coverage\_mapping.slurm](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/low_coverage_mapping.slurm)
+script with `sbatch` and use the `--export=VARIABLE_NAME=VALUE` command
+to pass the following input variables **in any order**:
+
+1.  `SERVER`: the server and the directory to mount to the computing
+    node (e.g. `SERVER='cbsunt246 workdir/'` or `SERVER='cbsubscb16
+    storage/'`)
+2.  `BASEDIR`: path to the base directory on the computing node (once
+    mounting is complete) where bam file are to be stored in a
+    subdirectory titled `bam`
+    (e.g. `BASEDIR=/fs/cbsunt246/workdir/cod/greenland-cod/`).
+3.  `FASTQDIR`: path to the directory on the computing node (once
+    mounting is complete) where fastq files ready for mapping are stored
+    (e.g. `FASTQDIR=/fs/cbsunt246/workdir/cod/greenland-cod/qual_filtered/`).
+4.  `SAMPLELIST`: path to a list of prefixes of the raw fastq files on
+    the computing node. This should be a subset of the the 1st column of
+    the sample table
+    (e.g. `SAMPLELIST=/fs/cbsunt246/workdir/cod/greenland-cod/sample_lists/sample_list_pe_1.tsv`).
+5.  `SAMPLETABLE`: path to a sample table on the computing node once
+    mounting is complete
+    (e.g. `SAMPLETABLE=/fs/cbsunt246/workdir/cod/greenland-cod/sample_lists/sample_table.tsv`),
+    where the 1st column is the prefix of the raw fastq files, the 4th
+    column is the sample ID, the 2nd column is the lane number, and the
+    3rd column is sequence ID. The combination of these three columns
+    have to be unique. The 6th column should be data type, which is
+    either pe or se.
+6.  `FASTQSUFFIX1`: Suffix to fastq files. Use forward reads with
+    paired-end data
+    (e.g. `FASTQSUFFIX1=_adapter_clipped_qual_filtered_f_paired.fastq.gz`).
+7.  `FASTQSUFFIX2`: Suffix to fastq files. Use reverse reads with
+    paired-end data
+    (e.g. `FASTQSUFFIX2=_adapter_clipped_qual_filtered_r_paired.fastq.gz`).
+8.  `MAPPINGPRESET`: The pre-set option to use for mapping in bowtie2
+    (`MAPPINGPRESET=very-sensitive` for end-to-end (global) mapping
+    \[typically used when we have a full genome reference\],
+    `MAPPINGPRESET=very-sensitive-local` for partial read mapping that
+    allows soft-clipping \[typically used when mapping genomic reads to
+    a transcriptome\]).
+9.  `REFERENCE`: Path to reference fasta file and file name on the
+    computing node
+    (e.g. `REFERENCE=/fs/cbsunt246/workdir/cod/reference_seqs/gadMor3.fasta`).
+10. `REFNAME`: Reference name to add to output files
+    (e.g. `REFNAME=gadMor3`).
+11. `MINQ`: Minimum mapping quality filter (e.g. `MINQ=0`, which means
+    no filter will be applied).
+12. `BOWTIE`: the path to the `bowtie2` program that can be accessed
+    from the computing node (e.g., `BOWTIE=bowtie2`, which will use the
+    system default `bowtie2`).
+13. `SAMTOOLS`: the path to the `samtools` program that can be accessed
+    from the computing node (e.g. `SAMTOOLS=samtools`, which will use
+    the system default samtools).
+14. `THREADS`: number of threads for `bowtie2` and `samtools` to use /
+    number of “tasks” per array job (e.g. `THREADS=8`).
+15. `ARRAY_LENGTH`: the number of array jobs to divide adapter clipping
+    into (e.g. `ARRAY_LENGTH=10`). This must be less than or equal to
+    the total number of samples in the SAMPLELIST. All samples will be
+    divided among array jobs as evenly as possible.
+16. `SCRIPT`: path to the adapter\_clipping.sh script on the computing
+    node once mounting is complete
+    (e.g. `SCRIPT=/fs/cbsunt246/workdir/data-processing/scripts/low_coverage_mapping.sh`).
+
+In addition, you will need to provide the following slurm options:
+
+1.  `--ntasks`: the number of threads per array job. This must be the
+    same as the `THREADS` variable passed through `--export`
+    (e.g. `--ntasks=8`).
+2.  `--array`: the array length. This must be in the format of `1-n`,
+    where `n` equals to the `ARRAY_LENGTH` variable passed through
+    `--export` (e.g. `--array=1-10`).
+3.  `--mem`: the maximum memory to be allocated to each array job
+    (e.g. `--mem=3G`).
+4.  `--partition`: the queue for each array job. This must be one of:
+    short (max 4 hrs), regular (max 24 hrs), long7 (max 7 days), long30
+    (max 30 days), or gpu (max 3 days) (e.g. `--partition=short`).
+
+<br>
+
+Below is an example taken from the Gulf of St. Lawrence cod project:
+
+``` bash
+sbatch --export=\
+SERVER='cbsubscb16 storage/',\
+BASEDIR=/fs/cbsubscb16/storage/cod/gosl-cod/,\
+FASTQDIR=/fs/cbsubscb16/storage/cod/gosl-cod/qual_filtered/,\
+SAMPLELIST=/fs/cbsubscb16/storage/cod/gosl-cod/sample_lists/fastq_list_lane_13.txt,\
+SAMPLETABLE=/fs/cbsubscb16/storage/cod/gosl-cod/sample_lists/sample_table_lane_13.tsv,\
+FASTQSUFFIX1=_adapter_clipped_qual_filtered_f_paired.fastq.gz,\
+FASTQSUFFIX2=_adapter_clipped_qual_filtered_r_paired.fastq.gz,\
+MAPPINGPRESET=very-sensitive,\
+REFERENCE=/fs/cbsubscb16/storage/cod/reference_seqs/gadMor3.fasta,\
+REFNAME=gadMor3,\
+MINQ=0,\
+BOWTIE=/programs/bowtie2-2.3.4.3/bowtie2,\
+SAMTOOLS=samtools,\
+THREADS=8,\
+ARRAY_LENGTH=86,\
+SCRIPT=/fs/cbsubscb16/storage/data-processing/scripts/low_coverage_mapping.sh \
+--ntasks=8 \
+--array=1-86 \
+--mem=3000 \
+--partition=regular \
+--output=/home/rl683/slurm/log/low_coverage_mapping_lane_13.log \
+/fs/cbsubscb16/storage/data-processing/scripts/low_coverage_mapping.slurm
+```
+
+<br>
+
+## Output
+
+Output from this step are raw and sorted bam files (one of each for each
+sample in the `SAMPLELIST`). They will be written in the `bam` folder
+under your project directory (i.e. `BASEDIR`).
+
+<br>
+
+## Notes
+
+  - You can use the `FASTQDIR` and `FASTQSUFFIX` variables to control
+    whether adapter clipped fastq files or quality filtered fastq files
+    will be mapped.  
+  - Filtering reads based on mapping quality in this step will save some
+    computing time in later steps, but it may also make reference bias
+    harder to detect (see [our preprint on this
+    issue](https://www.authorea.com/users/380682/articles/532568-batch-effects-in-population-genomic-studies-with-low-coverage-whole-genome-sequencing-data-causes-detection-and-mitigation?commit=22b0a2b89236a8a78206f02b855111eccf4b3c7d)).
+    Therefore, we recommend no mapping quality filter to be applied here
+    if reference bias could be a problem; reads with low mapping quality
+    can later be dropped or ignored by downstream analysis sofware.
+  - Certain `bowtie2` options are currently hardcoded (e.g. the expected
+    range of inter-mates distances is set up as 0-1500). Please submit a
+    GitHub issue if you would like them to be customizable.
