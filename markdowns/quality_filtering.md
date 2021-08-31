@@ -82,7 +82,7 @@ polyg \
 ## Computer cluster
 
 Submit the
-[quality\_filtering.slurm](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/adapter_clipping.sh)
+[quality\_filtering.slurm](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/quality_filtering.slurm)
 script with `sbatch` and use the `--export=VARIABLE_NAME=VALUE` command
 to pass the following input variables **in any order**:
 
