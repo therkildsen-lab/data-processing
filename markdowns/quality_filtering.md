@@ -1,0 +1,179 @@
+Quality filtering
+================
+
+  - [Introduction](#introduction)
+  - [Standalone server](#standalone-server)
+  - [Computer cluster](#computer-cluster)
+  - [Output](#output)
+  - [Notes](#notes)
+
+## Introduction
+
+Quality filtering is the process that removes poly-G tails, low-quality
+bases, extremely short sequencing reads, etc. It is an optional step for
+our pipeline.
+
+We use `fastp` to perform quality filtering. Currently, we support three
+functionalities:
+
+  - `polyg`: a 4-base sliding window moves from the begining of the read
+    to the end, cutting everything after the window in which the average
+    base quality drops below 20. In our experience, this is an effective
+    method to remove poly-G tails from sequencing reads generated in
+    NextSeq and NovaSeq platforms.
+  - `quality`: the default quality filtering operation in `fastp` is
+    performed, where reads with more than 40% of the bases having
+    quality scores lower than 15 are dropped.
+  - `length`: reads with length exceeding a certain threshold will be
+    trimmed to that threshold.
+
+<br>
+
+## Standalone server
+
+Run the
+[quality\_filtering.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/quality_filtering.sh)
+script with `nohup bash` and pass the following input variables as
+positional parameters **in the given order**:
+
+1.  `SAMPLELIST`: Path to a list of prefixes of the raw fastq files. It
+    should be a subset of the the 1st column of the sample table
+    (e.g. `/workdir/cod/greenland-cod/sample_lists/sample_list_pe_2.tsv`).
+2.  `SAMPLETABLE`: Path to a sample table where the 1st column is the
+    prefix of the raw fastq files. The 4th column is the sample ID, the
+    2nd column is the lane number, and the 3rd column is sequence ID.
+    The combination of these three columns have to be unique. The 6th
+    column should be data type, which is either pe or se
+    (e.g. `/workdir/cod/greenland-cod/sample_lists/sample_table.tsv`).
+3.  `BASEDIR`: Path to the base directory where adapter clipped fastq
+    file are stored in a subdirectory titled `adapter_clipped` and into
+    which output files will be written to separate subdirectories
+    (e.g. `/workdir/cod/greenland-cod/`).
+4.  `FILTER`: Type of filtering. Values can be: `polyg` (sliding window
+    trimming), `quality` (quality filtering), or `length` (trim all
+    reads to a maximum length).
+5.  `THREADS`: Number of threads for fastp to use (default to `8` if not
+    specified).
+6.  `FASTP`: Path to fastp (default to
+    `/workdir/programs/fastp_0.19.7/fastp` if not specified).
+7.  `MAXLENGTH`: Maximum length to trim all reads to. This input is only
+    relevant when `FILTER=length` (default to `100` if not specified).
+
+<br>
+
+Below is an example taken from the Greenland cod project:
+
+``` bash
+nohup bash /workdir/data-processing/scripts/quality_filtering.sh \
+/workdir/cod/greenland-cod/sample_lists/sample_list_pe_2.tsv \
+/workdir/cod/greenland-cod/sample_lists/sample_table.tsv \
+/workdir/cod/greenland-cod/ \
+polyg \
+8 \
+/workdir/programs/fastp_0.19.7/fastp \
+>& /workdir/cod/greenland-cod/nohups/quality_filtering_pe_2.nohup &
+```
+
+<br>
+
+## Computer cluster
+
+Submit the
+[quality\_filtering.slurm](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/adapter_clipping.sh)
+script with `sbatch` and use the `--export=VARIABLE_NAME=VALUE` command
+to pass the following input variables **in any order**:
+
+1.  `SERVER`: the server and the directory to mount to the computing
+    node (e.g. `SERVER='cbsunt246 workdir/'` or `SERVER='cbsubscb16
+    storage/'`)
+2.  `BASEDIR`: path to the base directory on the computing node (once
+    mounting is complete) where adapter clipped fastq file are to be
+    stored in a subdirectory titled `adapter_clipped`
+    (e.g. `BASEDIR=/fs/cbsunt246/workdir/cod/greenland-cod/`).
+3.  `SAMPLELIST`: path to a list of prefixes of the raw fastq files on
+    the computing node. This should be a subset of the the 1st column of
+    the sample table
+    (e.g. `SAMPLELIST=/fs/cbsunt246/workdir/cod/greenland-cod/sample_lists/sample_list_pe_1.tsv`).
+4.  `SAMPLETABLE`: path to a sample table on the computing node once
+    mounting is complete
+    (e.g. `SAMPLETABLE=/fs/cbsunt246/workdir/cod/greenland-cod/sample_lists/sample_table.tsv`),
+    where the 1st column is the prefix of the raw fastq files, the 4th
+    column is the sample ID, the 2nd column is the lane number, and the
+    3rd column is sequence ID. The combination of these three columns
+    have to be unique. The 6th column should be data type, which is
+    either pe or se.
+5.  `FILTER`: the type of quality filtering. One of: `FILTER=polyg`
+    (sliding window trimming), `FILTER=quality` (quality filtering), or
+    `FILTER=length` (trim all reads to a maximum length).
+6.  `THREADS`: number of threads for fastp to use / number of “tasks”
+    per array job (e.g. `THREADS=8`).
+7.  `FASTP`: the path to the `fastp` program that can be accessed from
+    the SLURM cluster
+    (e.g. `FASTP=/fs/cbsunt246/workdir/programs/fastp_0.19.7/fastp` or
+    `FASTP=/programs/fastp-0.20.0/bin/fastp`).
+8.  `MAXLENGTH`: if `FILTER=length`, then this is required and
+    represents the maximum length (ex: `MAXLENGTH=100`).
+9.  `ARRAY_LENGTH`: the number of array jobs to divide adapter clipping
+    into (e.g. `ARRAY_LENGTH=10`). This must be less than or equal to
+    the total number of samples in the SAMPLELIST. All samples will be
+    divided among array jobs as evenly as possible.
+10. `SCRIPT`: path to the adapter\_clipping.sh script on the computing
+    node once mounting is complete
+    (e.g. `SCRIPT=/fs/cbsunt246/workdir/data-processing/scripts/quality_filtering.sh`).
+
+In addition, you will need to provide the following slurm options:
+
+1.  `--ntasks`: the number of threads per array job. This must be the
+    same as the `THREADS` variable passed through `--export`
+    (e.g. `--ntasks=8`).
+2.  `--array`: the array length. This must be in the format of `1-n`,
+    where `n` equals to the `ARRAY_LENGTH` variable passed through
+    `--export` (e.g. `--array=1-10`).
+3.  `--mem`: the maximum memory to be allocated to each array job
+    (e.g. `--mem=3G`).
+4.  `--partition`: the queue for each array job. This must be one of:
+    short (max 4 hrs), regular (max 24 hrs), long7 (max 7 days), long30
+    (max 30 days), or gpu (max 3 days) (e.g. `--partition=short`).
+
+<br>
+
+Below is an example taken from the Gulf of St. Lawrence cod project:
+
+``` bash
+sbatch --export=\
+SERVER='cbsubscb16 storage/',\
+BASEDIR=/fs/cbsubscb16/storage/cod/gosl-cod/,\
+SAMPLELIST=/fs/cbsubscb16/storage/cod/gosl-cod/sample_lists/fastq_list_lane_13.txt,\
+SAMPLETABLE=/fs/cbsubscb16/storage/cod/gosl-cod/sample_lists/sample_table_lane_13.tsv,\
+FILTER=polyg,\
+FASTP=/programs/fastp-0.20.0/bin/fastp,\
+THREADS=4,\
+ARRAY_LENGTH=86,\
+SCRIPT=/fs/cbsubscb16/storage/data-processing/scripts/quality_filtering.sh \
+--ntasks=4 \
+--array=1-86 \
+--mem=3000 \
+--partition=short \
+--output=/home/rl683/slurm/log/quality_filtering_lane_13.log \
+/fs/cbsubscb16/storage/data-processing/scripts/quality_filtering.slurm
+```
+
+<br>
+
+## Output
+
+Output from this step are quality filtered fastq files and they will be
+written in the `qual_filtered` folder under your project directory
+(i.e. `BASEDIR`). A single file will be generated for each sample with
+single-end data, and two different files will be generated for each
+sample with paired-end data. In addition, html-formated fastp report
+files will be generated, which include several QC stats and plots before
+and after filtering.
+
+<br>
+
+## Notes
+
+  - If you would like to use `fastp` functionalities other than the
+    three that we included, please submit an issue or add them yourself
+    to the `quality_filtering.sh` script.
