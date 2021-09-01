@@ -1,0 +1,148 @@
+Deduplication and overlap clipping
+================
+
+  - [Introduction](#introduction)
+  - [Standalone server](#standalone-server)
+  - [Computer cluster](#computer-cluster)
+  - [Output](#output)
+  - [Notes](#notes)
+
+## Introduction
+
+Deduplication removes PCR and optical duplicates from sequencing
+alignment files. For paired-end reads, the overlapping part of read
+pairs will be removed by the overlap clipping process to avoid double
+counting (this happens when read length\*2 \< insert size).
+
+We use `picard-tools` to perform read alignment, and `bamUtil` for
+sorting and filtering.
+
+<br>
+
+## Standalone server
+
+Run the
+[deduplicate\_clipoverlap.sh](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/deduplicate_clipoverlap.sh)
+script with `nohup bash` and pass the following input variables as
+positional parameters **in the given order**:
+
+1.  `BAMLIST`: Path to a list of **merged** bam files. It should be a
+    subset of the the 1st column of the sample table
+    (e.g. `/workdir/cod/greenland-cod/sample_lists/bam_list_merged.txt`).
+2.  `SAMPLETABLE`: Path to a sample table where the 1st column is the
+    prefix of the **merged** bam files. The 4th column is the sample ID,
+    the 2nd column is the lane number, and the 3rd column is sequence
+    ID. The 5th column is population name and 6th column is the data
+    type.
+    (e.g. `/workdir/cod/greenland-cod/sample_lists/sample_table_merged.tsv`).
+3.  `JAVA`: Path to java (default to `java` if not specified).
+4.  `PICARD`: Path to `picard` (default to
+    `/programs/picard-tools-2.9.0/picard.jar` if not specified)
+5.  `BAMUTIL`: Path to `bamUtil` (default to `/programs/bamUtil/bam` if
+    not specified)
+
+<br>
+
+Below is an example taken from the Greenland cod project:
+
+``` bash
+nohup bash /workdir/data-processing/scripts/deduplicate_clipoverlap.sh \
+/workdir/cod/greenland-cod/sample_lists/bam_list_merged.txt \
+/workdir/cod/greenland-cod/sample_lists/sample_table_merged.tsv \
+java \
+/programs/picard-tools-2.9.0/picard.jar \
+/programs/bamUtil/bam \
+> /workdir/cod/greenland-cod/nohups/deduplicate_clipoverlap.nohup &
+```
+
+<br>
+
+## Computer cluster
+
+Submit the
+[deduplicate\_clipoverlap.slurm](https://github.com/therkildsen-lab/data-processing/blob/master/scripts/deduplicate_clipoverlap.slurm)
+script with `sbatch` and use the `--export=VARIABLE_NAME=VALUE` command
+to pass the following input variables **in any order**:
+
+1.  `SERVER`: the server and the directory to mount to the computing
+    node (e.g. `SERVER='cbsunt246 workdir/'` or `SERVER='cbsubscb16
+    storage/'`)
+2.  `BAMLIST`: path to a list of **merged** bam files on the computing
+    node. This should be a subset of the the 1st column of the sample
+    table
+    (e.g. `BAMLIST=/fs/cbsunt246/workdir/cod/greenland-cod/sample_lists/bam_list_merged.txt`).
+3.  `SAMPLETABLE`: path to a sample table on the computing node
+    (e.g. `SAMPLETABLE=/fs/cbsunt246/workdir/cod/greenland-cod/sample_lists/sample_table_merged.tsv`).
+    The 1st column is the prefix of the **merged** bam files. The 4th
+    column is the sample ID, the 2nd column is the lane number, and the
+    3rd column is sequence ID. The 5th column is population name and 6th
+    column is the data type.
+4.  `JAVA`: the path to the `java` program that can be accessed from the
+    computing node (e.g., `JAVA=java`, which will use the system default
+    `java`).
+5.  `PICARD`: the path to the `picard` program that can be accessed from
+    the computing node
+    (e.g. `PICARD=/programs/picard-tools-2.9.0/picard.jar`).
+6.  `BAMUTIL`: the path to the `bamUtil` program that can be accessed
+    from the computing node (e.g. `BAMUTIL=/programs/bamUtil/bam`).
+7.  `ARRAY_LENGTH`: the number of array jobs to divide adapter clipping
+    into (e.g. `ARRAY_LENGTH=10`). This must be less than or equal to
+    the total number of samples in the `BAMLIST`. All samples will be
+    divided among array jobs as evenly as possible.
+8.  `SCRIPT`: path to the adapter\_clipping.sh script on the computing
+    node once mounting is complete
+    (e.g. `SCRIPT=/fs/cbsunt246/workdir/data-processing/scripts/deduplicate_clipoverlap.sh`).
+
+In addition, you will need to provide the following slurm options:
+
+1.  `--ntasks`: the number of threads per array job. This must be the
+    same as the `THREADS` variable passed through `--export`
+    (e.g. `--ntasks=8`).
+2.  `--array`: the array length. This must be in the format of `1-n`,
+    where `n` equals to the `ARRAY_LENGTH` variable passed through
+    `--export` (e.g. `--array=1-10`).
+3.  `--mem`: the maximum memory to be allocated to each array job
+    (e.g. `--mem=3G`).
+4.  `--partition`: the queue for each array job. This must be one of:
+    short (max 4 hrs), regular (max 24 hrs), long7 (max 7 days), long30
+    (max 30 days), or gpu (max 3 days) (e.g. `--partition=short`).
+
+<br>
+
+Below is an example taken from the Gulf of St. Lawrence cod project:
+
+``` bash
+sbatch --export=\
+SERVER='cbsubscb16 storage/',\
+BAMLIST=/fs/cbsubscb16/storage/cod/gosl-cod/sample_lists/bam_list_merged.txt,\
+SAMPLETABLE=/fs/cbsubscb16/storage/cod/gosl-cod/sample_lists/sample_table_merged.tsv,\
+JAVA=java,\
+PICARD=/programs/picard-tools-2.9.0/picard.jar,\
+BAMUTIL=/programs/bamUtil/bam,\
+ARRAY_LENGTH=227,\
+SCRIPT=/fs/cbsubscb16/storage/data-processing/scripts/deduplicate_clipoverlap.sh \
+--ntasks=1 \
+--array=1-227 \
+--mem=65G \
+--partition=short \
+--output=/home/rl683/slurm/log/deduplicate_clipoverlap.log \
+/fs/cbsubscb16/storage/data-processing/scripts/deduplicate_clipoverlap.slurm
+```
+
+<br>
+
+## Output
+
+Output from this step are deduplicated bam files, deduplication stats,
+and for paired-end data, overlap clipped bam files. They will be written
+in the `bam` folder under your project directory (i.e. `BASEDIR`).
+
+<br>
+
+## Notes
+
+  - Deduplication can be memory intensive, so our script does not run
+    multiple deduplication jobs in parallel on a standalone server.
+
+  - Overlap clipping will be run for a sample if its data type isn’t
+    `se` in the `SAMPLETABLE`.
