@@ -29,6 +29,8 @@ fi
 
 done
 
+wait
+
 ## Realign around in-dels
 # This is done across all samples at once
 
